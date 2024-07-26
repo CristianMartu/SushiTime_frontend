@@ -1,57 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Container, ListGroup, Row } from "react-bootstrap";
 import Products from "./Products";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getCategories,
+  setActiveCategory,
+  setCategoryName,
+} from "../redux/actions";
 
 const Menu = () => {
-  const myKey =
-    "eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjE3MjM1MjMsImV4cCI6MTcyMjMyODMyMywic3ViIjoiMmYyNDE5MzQtMGYyNS00M2I2LTg1ZTQtNGZjMzcwYmQ5YjcyIn0.EUNt42jE55VGjtzI5_raSTMt_vGQeXZ357-j1z6Jy1n9cUsG1LIaD5hdaFaDU4zYkkyRwzFPQdWL-UMd9sQ7VQ";
-
-  const URL = "http://localhost:3001/categories?size=50";
-
-  const [category, setCategory] = useState();
-  const [activeItem, setActiveItem] = useState(null);
-  const [name, setName] = useState(null);
-
-  const categoryFetch = async () => {
-    try {
-      const response = await fetch(URL, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${myKey}`,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setCategory(data);
-        console.log(data);
-      } else {
-        alert("Errore nella fetch ");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const dispatch = useDispatch();
+  const category = useSelector((state) => state.category.all);
+  const name = useSelector((state) => state.category.name);
+  const activeCategory = useSelector((state) => state.category.id);
 
   useEffect(() => {
-    categoryFetch();
+    dispatch(getCategories());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="d-flex">
       <ListGroup as="ul" style={{ width: "20rem" }}>
-        {category ? (
-          category.content.map((element, index) => (
+        {Array.isArray(category.content) ? (
+          category.content.map((element) => (
             <ListGroup.Item
               as="li"
               key={element.id}
               variant="info"
               active={
-                activeItem == null ? setActiveItem(0) : activeItem == index
+                activeCategory === null
+                  ? category.content[0].id == element.id
+                  : activeCategory == element.id
               }
               onClick={() => {
-                setActiveItem(index);
-                setName(element.name);
+                dispatch(setCategoryName(element.name));
+                dispatch(setActiveCategory(element.id));
               }}
             >
               {element.name}
@@ -64,8 +48,8 @@ const Menu = () => {
 
       <Container className="my-4">
         <Row className="row-gap-3" style={{ height: "400px" }}>
-          {category ? (
-            <Products categoryName={name} />
+          {Array.isArray(category.content) ? (
+            <Products categoryName={name || category.content[0]?.name} />
           ) : (
             <div>Nessun risultato</div>
           )}

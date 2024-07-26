@@ -1,4 +1,4 @@
-.bi-dash-lg:hover,
-.bi-plus-lg:hover {
+.minus:hover,
+.plus:hover {
   color: black;
 }
