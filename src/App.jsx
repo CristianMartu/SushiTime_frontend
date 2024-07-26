@@ -9,7 +9,7 @@ import { useEffect } from "react";
 function App() {
   useEffect(() => {
     const myKey =
-      "eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjE3MjM1MjMsImV4cCI6MTcyMjMyODMyMywic3ViIjoiMmYyNDE5MzQtMGYyNS00M2I2LTg1ZTQtNGZjMzcwYmQ5YjcyIn0.EUNt42jE55VGjtzI5_raSTMt_vGQeXZ357-j1z6Jy1n9cUsG1LIaD5hdaFaDU4zYkkyRwzFPQdWL-UMd9sQ7VQ";
+      "eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjE5ODU3MzQsImV4cCI6MTcyMjU5MDUzNCwic3ViIjoiMjE4NTA4OTEtMDM0Yy00Y2UyLTgyMDMtYTdiZDFkZmUwNGE1In0.hyeYokcWlybBjvxQHpySZr2C_wxH4XH1qQgkLb6bLo_GPdwKjuhDOphUd-nW1LMtDBGHz5e5lXdhliTRrF04Lg";
     localStorage.setItem("authToken", myKey);
   }, []);
 

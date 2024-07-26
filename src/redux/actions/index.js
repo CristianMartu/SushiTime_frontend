@@ -3,7 +3,7 @@ export const GET_ORDER = "GET_ORDER";
 const token = localStorage.getItem("authToken");
 
 const URL_ORDER =
-  "http://localhost:3001/orders/ed420199-f3fa-4dba-9cc6-4c0584991f5b";
+  "http://localhost:3001/orders/38e1a137-9c96-4d82-b850-c61636affb44";
 
 export const getOrder = () => {
   return async (dispatch, getState) => {
@@ -68,11 +68,18 @@ export const getCategories = () => {
 };
 
 export const ADD_PRODUCT = " ADD_PRODUCT";
+export const REMOVE_PRODUCT = "REMOVE_PRODUCT";
 
-export const addProduct = (product) => ({
-  type: ADD_PRODUCT,
-  payload: product,
+export const removeProduct = (payload) => ({
+  type: REMOVE_PRODUCT,
+  payload,
 });
+
+export const addProduct = (payload) => ({
+  type: ADD_PRODUCT,
+  payload,
+});
+
 // export const GET_ALL_PRODUCTS_BY_CATEGORY = "GET_ALL_PRODUCTS_BY_CATEGORY";
 // export const getAllProducts = (paylaod) => ({
 //   type: GET_ALL_PRODUCTS_BY_CATEGORY,
