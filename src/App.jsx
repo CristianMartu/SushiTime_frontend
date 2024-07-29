@@ -5,11 +5,12 @@ import MyNavbar from "./components/MyNavbar";
 import Menu from "./components/Menu";
 import MyHome from "./components/MyHome";
 import { useEffect } from "react";
+import History from "./components/History";
 
 function App() {
   useEffect(() => {
     const myKey =
-      "eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjE5ODU3MzQsImV4cCI6MTcyMjU5MDUzNCwic3ViIjoiMjE4NTA4OTEtMDM0Yy00Y2UyLTgyMDMtYTdiZDFkZmUwNGE1In0.hyeYokcWlybBjvxQHpySZr2C_wxH4XH1qQgkLb6bLo_GPdwKjuhDOphUd-nW1LMtDBGHz5e5lXdhliTRrF04Lg";
+      "eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjE5OTcyMjEsImV4cCI6MTcyMjYwMjAyMSwic3ViIjoiMmYyNDE5MzQtMGYyNS00M2I2LTg1ZTQtNGZjMzcwYmQ5YjcyIn0.KTgSIpclyjHysQJx6mCcA5Jk-QmPurOZPyCJoIyPkqx4Y2kvVtZUsn7ZSSoBgSc_4Xu3XVbgo2pOeFqwIBUUmA";
     localStorage.setItem("authToken", myKey);
   }, []);
 
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<MyHome />} />
         <Route path="/menu" element={<Menu />} />
+        <Route path="/history" element={<History />} />
       </Routes>
     </BrowserRouter>
   );

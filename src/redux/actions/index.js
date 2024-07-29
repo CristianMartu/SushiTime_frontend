@@ -2,8 +2,10 @@ export const GET_ORDER = "GET_ORDER";
 
 const token = localStorage.getItem("authToken");
 
-const URL_ORDER =
-  "http://localhost:3001/orders/38e1a137-9c96-4d82-b850-c61636affb44";
+const urlBase = "http://localhost:3001";
+const orderId = "84342983-1a44-485c-ba97-7b03f69c1281";
+
+const URL_ORDER = `${urlBase}/orders/${orderId}`;
 
 export const getOrder = () => {
   return async (dispatch, getState) => {
@@ -43,7 +45,7 @@ export const setActiveCategory = (payload) => ({
   payload,
 });
 
-const URL_ALL_CATEGORY = "http://localhost:3001/categories?size=50";
+const URL_ALL_CATEGORY = `${urlBase}/categories?size=50`;
 
 export const getCategories = () => {
   return async (dispatch, getState) => {
@@ -69,6 +71,7 @@ export const getCategories = () => {
 
 export const ADD_PRODUCT = " ADD_PRODUCT";
 export const REMOVE_PRODUCT = "REMOVE_PRODUCT";
+export const EMPTY_SAVE_PRODUCT = "EMPTY_SAVE_PRODUCT";
 
 export const removeProduct = (payload) => ({
   type: REMOVE_PRODUCT,
@@ -80,37 +83,53 @@ export const addProduct = (payload) => ({
   payload,
 });
 
-// export const GET_ALL_PRODUCTS_BY_CATEGORY = "GET_ALL_PRODUCTS_BY_CATEGORY";
-// export const getAllProducts = (paylaod) => ({
-//   type: GET_ALL_PRODUCTS_BY_CATEGORY,
-//   paylaod,
-// });
+const URL_DETAIL_BY_ORDER = `${urlBase}/orders/${orderId}/details?size=50`;
 
-// const URL_PRODUCTS = "http://localhost:3001/products/category?size=50";
+export const saveOrderDetails = (products) => {
+  return async (dispatch, getState) => {
+    console.log("GET STATE", getState());
+    try {
+      let response = await fetch(URL_DETAIL_BY_ORDER, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(products),
+      });
 
-// export const getProducts = (categoryName) => {
-//   const payload = {
-//     name: categoryName,
-//   };
-//   return async (dispatch, getState) => {
-//     console.log("GET STATE", getState());
-//     try {
-//       let response = await fetch(URL_PRODUCTS, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${token}`,
-//         },
-//         body: JSON.stringify(payload),
-//       });
-//       if (response.ok) {
-//         let data = await response.json();
-//         dispatch(getAllProducts(data));
-//       } else {
-//         throw new Error("Errore nella fetch ");
-//       }
-//     } catch (error) {
-//       console.log("error", error);
-//     }
-//   };
-// };
+      if (!response.ok) {
+        throw new Error("Failed to save order details");
+      }
+      //const data = await response.json();
+      dispatch({ type: EMPTY_SAVE_PRODUCT });
+    } catch (error) {
+      console.log("error", error);
+      //dispatch({ type: 'SAVE_ORDER_DETAILS_FAILURE', payload: error.message });
+    }
+  };
+};
+
+export const GET_ALL_DETAIL_BY_ORDER = "GET_ALL_DETAIL_BY_ORDER";
+
+export const getAllDetailByOrder = () => {
+  return async (dispatch, getState) => {
+    console.log("GET STATE", getState());
+    try {
+      let response = await fetch(URL_DETAIL_BY_ORDER, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save order details");
+      }
+      const data = await response.json();
+      dispatch({ type: "GET_ALL_DETAIL_BY_ORDER", payload: data });
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+};

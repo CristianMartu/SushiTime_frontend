@@ -46,18 +46,23 @@ const Products = ({ categoryName }) => {
 
   const saveAddProduct = useSelector((state) => state.product.content);
 
-  const quantity = () => {
-    saveAddProduct;
-  };
+  const isSaved = (id) =>
+    saveAddProduct.findIndex((product) => product.id === id) !== -1;
 
   return menu ? (
     menu.content.map((product) => {
       const selectedProduct = saveAddProduct.filter((p) => p.id === product.id);
       const quantity = selectedProduct ? selectedProduct.length : 0;
+      const imageUrl = product.image.startsWith("http")
+        ? product.image
+        : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg";
 
       return (
         <Col key={product.id} className="d-flex align-items-stretch">
-          <Card style={{ width: "16rem", maxHeight: "600px" }}>
+          <Card
+            style={{ width: "16rem", maxHeight: "600px" }}
+            border={isSaved(product.id) ? "danger" : "info"}
+          >
             <Card.Body>
               <Card.Title>
                 {product.number} - {product.name}
@@ -65,13 +70,24 @@ const Products = ({ categoryName }) => {
               <CardText>{product.description}</CardText>
               <CardText className="text-info">{product.price} €</CardText>
             </Card.Body>
-            <Card.Img variant="top" src={product.image} />
-            <CardFooter className="bg-info d-flex justify-content-between text-white fs-3">
+            <Card.Img
+              variant="top"
+              src={imageUrl}
+              className="fixed-size-image"
+            />
+            <CardFooter
+              className={
+                isSaved(product.id)
+                  ? "bg-danger d-flex justify-content-between text-white fs-3"
+                  : "bg-info d-flex justify-content-between text-white fs-3"
+              }
+            >
               <FaMinus
                 className="my-auto minus"
                 onClick={() => {
-                  dispatch(removeProduct(product));
-                  console.log(removeProduct(product));
+                  if (isSaved(product.id)) {
+                    dispatch(removeProduct(product.id));
+                  }
                 }}
               />
               <div>{quantity}</div>
@@ -89,39 +105,5 @@ const Products = ({ categoryName }) => {
   ) : (
     <div>Nessun risultato</div>
   );
-
-  // return menu ? (
-  //   menu.content.map((product) => (
-  //     <Col key={product.id} className=" d-flex align-items-stretch">
-  //       <Card style={{ width: "16rem", maxHeight: "600px" }}>
-  //         <Card.Body>
-  //           <Card.Title>
-  //             {product.number} - {product.name}
-  //           </Card.Title>
-  //           <CardText>{product.description}</CardText>
-  //           <CardText className="text-info">{product.price} €</CardText>
-  //         </Card.Body>
-  //         <Card.Img variant="top" src={product.image} />
-  //         <CardFooter className="bg-info d-flex justify-content-between text-white fs-3">
-  //           <FaMinus
-  //             className="my-auto minus"
-  //             onClick={() => {
-  //               dispatch(removeProduct(product));
-  //             }}
-  //           />
-  //           <div>{}</div>
-  //           <TiPlus
-  //             className="my-auto plus"
-  //             onClick={() => {
-  //               dispatch(addProduct(product));
-  //             }}
-  //           />
-  //         </CardFooter>
-  //       </Card>
-  //     </Col>
-  //   ))
-  // ) : (
-  //   <div>Nessun risultato</div>
-  // );
 };
 export default Products;
