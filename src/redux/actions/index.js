@@ -72,6 +72,8 @@ export const getCategories = () => {
 export const ADD_PRODUCT = " ADD_PRODUCT";
 export const REMOVE_PRODUCT = "REMOVE_PRODUCT";
 export const EMPTY_SAVE_PRODUCT = "EMPTY_SAVE_PRODUCT";
+export const ERROR_DETAILS = "ERROR_DETAILS";
+export const EMPTY_ERROR_DETAILS = "EMPTY_ERROR_DETAILS";
 
 export const removeProduct = (payload) => ({
   type: REMOVE_PRODUCT,
@@ -82,6 +84,13 @@ export const addProduct = (payload) => ({
   type: ADD_PRODUCT,
   payload,
 });
+
+export const handleError = (payload) => ({
+  type: ERROR_DETAILS,
+  payload,
+});
+
+export const emptyErrorDetails = () => ({ type: EMPTY_ERROR_DETAILS });
 
 const URL_DETAIL_BY_ORDER = `${urlBase}/orders/${orderId}/details?size=50`;
 
@@ -99,13 +108,14 @@ export const saveOrderDetails = (products) => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to save order details");
+        const errorData = await response.json();
+        throw new Error(errorData.message);
       }
-      //const data = await response.json();
+      // const data = await response.json();
       dispatch({ type: EMPTY_SAVE_PRODUCT });
     } catch (error) {
-      console.log("error", error);
-      //dispatch({ type: 'SAVE_ORDER_DETAILS_FAILURE', payload: error.message });
+      console.log(error.message);
+      dispatch(handleError(error.message));
     }
   };
 };
@@ -124,7 +134,7 @@ export const getAllDetailByOrder = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to save order details");
+        throw new Error("Errore nell'ottenere i dettagli dell'ordine");
       }
       const data = await response.json();
       dispatch({ type: "GET_ALL_DETAIL_BY_ORDER", payload: data });

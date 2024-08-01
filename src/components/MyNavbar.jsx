@@ -8,22 +8,24 @@ import { IoHome } from "react-icons/io5";
 import { MdMenuBook } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { getOrder, saveOrderDetails } from "../redux/actions";
-import { Button, ListGroup, Modal } from "react-bootstrap";
+import {
+  emptyErrorDetails,
+  getAllDetailByOrder,
+  getOrder,
+  saveOrderDetails,
+} from "../redux/actions";
+import { Alert, Button, ListGroup, Modal } from "react-bootstrap";
 import { BsCart } from "react-icons/bs";
 
 const MyNavbar = () => {
   const dispatch = useDispatch();
   const order = useSelector((state) => state.order.content);
-
-  useEffect(() => {
-    dispatch(getOrder());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const saveProduct = useSelector((state) => state.product.content);
+  const handleError = useSelector((state) => state.error.message);
+  const orderDetails = useSelector((state) => state.order.all);
 
   const [show, setShow] = useState(false);
-
-  const saveProduct = useSelector((state) => state.product.content);
+  const [showAlert, setShowAlert] = useState(false);
 
   const viewProduct = saveProduct.reduce((acc, product) => {
     if (!acc[product.number]) {
@@ -34,17 +36,56 @@ const MyNavbar = () => {
   }, {});
 
   const handleFetch = () => {
+    setShow(false);
     const payload = Object.keys(viewProduct).map((number) => ({
       number: Number(number),
       quantity: viewProduct[number].length,
+      price: viewProduct[number][0].price * viewProduct[number].length,
     }));
 
     if (payload.length > 0) {
       dispatch(saveOrderDetails(payload));
-      setShow(false);
-      console.log(payload);
+      console.log(JSON.stringify(payload));
     }
   };
+
+  const timeToNewOrder = () => {
+    const lastOrderTime = new Date(orderDetails.content[0].orderTime);
+    const difference = (new Date() - lastOrderTime) / (1000 * 60);
+
+    if (difference < 10) {
+      const time = new Date(lastOrderTime.getTime() + 10 * 60000);
+      // console.log(time);
+      return `Prossima ordinazione: ${time
+        .getHours()
+        .toString()
+        .padStart(2, "0")}:${time.getMinutes().toString().padStart(2, "0")}`;
+    } else {
+      return "";
+    }
+  };
+
+  useEffect(() => {
+    dispatch(getOrder());
+    dispatch(getAllDetailByOrder());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (showAlert) {
+      const timer = setTimeout(() => {
+        setShowAlert(false);
+        dispatch(emptyErrorDetails());
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showAlert]);
+
+  useEffect(() => {
+    if (handleError != null) {
+      setShowAlert(true);
+    }
+  }, [handleError]);
 
   return (
     <>
@@ -105,29 +146,41 @@ const MyNavbar = () => {
           <Modal.Title>Ordine</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <ListGroup as="ul">
+          <ListGroup as="ul" className="mb-3">
             {saveProduct.length > 0 ? (
-              Object.keys(viewProduct).map((key) => (
+              Object.values(viewProduct).map((key, index) => (
                 <ListGroup.Item
                   as="li"
-                  key={key}
+                  key={index}
                   className="d-flex justify-content-between w-75 mx-auto"
                 >
                   <div>
-                    {viewProduct[key][0].number} {viewProduct[key][0].name}:
+                    {key[0].number} {key[0].name}:
                   </div>
-                  <div>{viewProduct[key].length}</div>
+                  <div>{key.length}</div>
                 </ListGroup.Item>
               ))
             ) : (
               <div>Nessun prodotto salvato</div>
             )}
           </ListGroup>
-          <Button variant="danger" onClick={() => handleFetch()}>
-            Invio
-          </Button>
+          <div className="d-flex justify-content-between align-items-center">
+            <Button variant="danger" onClick={() => handleFetch()}>
+              Invio
+            </Button>
+            <div>
+              {saveProduct.length}/
+              {order.table ? order.table.currentPeople * 10 : 0}
+            </div>
+            <div>{orderDetails.content && timeToNewOrder()}</div>
+          </div>
         </Modal.Body>
       </Modal>
+      {showAlert && (
+        <div className={`alert-container ${showAlert ? "visible" : "hidden"}`}>
+          <Alert variant="danger">{handleError}</Alert>
+        </div>
+      )}
     </>
   );
 };

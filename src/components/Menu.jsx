@@ -22,7 +22,7 @@ const Menu = () => {
   return (
     <div className="d-flex">
       <ListGroup as="ul" style={{ width: "20rem" }}>
-        {Array.isArray(category.content) ? (
+        {category.content ? (
           category.content.map((element) => (
             <ListGroup.Item
               as="li"
@@ -48,7 +48,7 @@ const Menu = () => {
 
       <Container className="my-4">
         <Row className="row-gap-3" style={{ height: "400px" }}>
-          {Array.isArray(category.content) ? (
+          {category.content ? (
             <Products categoryName={name || category.content[0]?.name} />
           ) : (
             <div>Nessun risultato</div>

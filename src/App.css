@@ -13,3 +13,13 @@
   width: 80%;
   max-width: none;
 }
+
+.alert-container {
+  position: fixed;
+  /* top: 20px;
+  left: 50%; */
+  left: 50vw;
+  bottom: 5vh;
+  transform: translateX(-50%);
+  z-index: 1050;
+}
