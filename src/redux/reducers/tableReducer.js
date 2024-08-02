@@ -1,12 +1,12 @@
-import { GET_ALL_ORDER } from "../actions";
+import { GET_ALL_TABLE } from "../actions";
 
 const initialState = {
   all: [],
 };
 
-const orderReducer = (state = initialState, action) => {
+const tableReducer = (state = initialState, action) => {
   switch (action.type) {
-    case GET_ALL_ORDER:
+    case GET_ALL_TABLE:
       return {
         ...state,
         all: action.payload,
@@ -17,4 +17,4 @@ const orderReducer = (state = initialState, action) => {
   }
 };
 
-export default orderReducer;
+export default tableReducer;

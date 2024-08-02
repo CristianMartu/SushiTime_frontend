@@ -10,6 +10,7 @@ import {
 } from "../redux/actions";
 
 const Menu = () => {
+  localStorage.setItem("adminPassword", "");
   const dispatch = useDispatch();
   const category = useSelector((state) => state.category.all);
   const name = useSelector((state) => state.category.name);

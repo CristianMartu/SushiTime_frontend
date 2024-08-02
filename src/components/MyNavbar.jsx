@@ -19,10 +19,10 @@ import { RxExit } from "react-icons/rx";
 
 const MyNavbar = () => {
   const dispatch = useDispatch();
-  const order = useSelector((state) => state.order.content);
+  const order = useSelector((state) => state.orderDetail.byOrder);
   const saveProduct = useSelector((state) => state.product.content);
   const handleError = useSelector((state) => state.error.message);
-  const orderDetails = useSelector((state) => state.order.all);
+  const orderDetails = useSelector((state) => state.orderDetail.all);
 
   const [show, setShow] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -190,7 +190,7 @@ const MyNavbar = () => {
             </Button>
             <div>
               {saveProduct.length}/
-              {order.table ? order.table.currentPeople * 10 : 0}
+              {order.table ? order.table.currentPeople * 6 : 0}
             </div>
             <div>{orderDetails.content && timeToNewOrder()}</div>
           </div>

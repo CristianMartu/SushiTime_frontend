@@ -1,7 +1,13 @@
-import { ADD_PRODUCT, EMPTY_SAVE_PRODUCT, REMOVE_PRODUCT } from "../actions";
+import {
+  ADD_PRODUCT,
+  EMPTY_SAVE_PRODUCT,
+  GET_ALL_PRODUCT,
+  REMOVE_PRODUCT,
+} from "../actions";
 
 const initialState = {
   content: [],
+  all: [],
 };
 
 const productReducer = (state = initialState, action) => {
@@ -31,6 +37,12 @@ const productReducer = (state = initialState, action) => {
       return {
         ...state,
         content: [],
+      };
+
+    case GET_ALL_PRODUCT:
+      return {
+        ...state,
+        all: action.payload,
       };
 
     default:

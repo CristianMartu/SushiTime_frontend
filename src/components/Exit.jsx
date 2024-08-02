@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Exit = () => {
-  const order = useSelector((state) => state.order.content);
+  const order = useSelector((state) => state.orderDetail.byOrder);
+  const navigate = useNavigate();
 
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -18,6 +20,8 @@ const Exit = () => {
     } else {
       setPasswordError("");
       console.log("Prova invio");
+      localStorage.setItem("adminPassword", key);
+      navigate("/orders");
     }
     setPassword("");
   };

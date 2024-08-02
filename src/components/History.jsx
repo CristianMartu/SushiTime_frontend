@@ -6,9 +6,9 @@ import { IoPerson } from "react-icons/io5";
 
 const History = () => {
   const dispatch = useDispatch();
-  const order = useSelector((state) => state.order.content);
-  const orders = useSelector((state) => state.order.all);
-  const menu = useSelector((state) => state.order.menuPrice);
+  const order = useSelector((state) => state.orderDetail.byOrder);
+  const orders = useSelector((state) => state.orderDetail.all);
+  const menu = useSelector((state) => state.orderDetail.menuPrice);
 
   useEffect(() => {
     dispatch(getAllDetailByOrder());
@@ -25,7 +25,7 @@ const History = () => {
     }, {});
   };
 
-  const dateFormat = (dateStr, format) => {
+  const dateFormat = (dateStr, format = "YYYY-MM-DD HH:mm") => {
     const dateObj = new Date(dateStr);
     const parts = {
       YYYY: dateObj.getFullYear(),
@@ -72,7 +72,7 @@ const History = () => {
         Object.values(viewProduct()).map((element, index) => (
           <ListGroup key={index} className="my-3">
             <ListGroup.Item active>
-              {dateFormat(element[0].orderTime, "YYYY-MM-DD HH:mm")}
+              {dateFormat(element[0].orderTime)}
             </ListGroup.Item>
             {element.map((order) => (
               <ListGroup.Item key={order.id}>

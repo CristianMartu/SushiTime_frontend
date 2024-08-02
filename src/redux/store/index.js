@@ -1,14 +1,18 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import orderReducer from "../reducers/orderReducer";
 import categoryReducer from "../reducers/categoryReducer";
 import productReducer from "../reducers/productReducer";
 import errorReducer from "../reducers/errorReducer";
+import orderDetailsReducer from "../reducers/orderDetailReducer";
+import orderReducer from "../reducers/orderReducer";
+import tableReducer from "../reducers/tableReducer";
 
 const rootReducer = combineReducers({
   order: orderReducer,
+  orderDetail: orderDetailsReducer,
   category: categoryReducer,
   product: productReducer,
   error: errorReducer,
+  table: tableReducer,
 });
 const store = configureStore({
   reducer: rootReducer,
