@@ -2,10 +2,13 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllDetailByOrder } from "../redux/actions";
 import { Col, Container, ListGroup, Row } from "react-bootstrap";
+import { IoPerson } from "react-icons/io5";
 
 const History = () => {
   const dispatch = useDispatch();
+  const order = useSelector((state) => state.order.content);
   const orders = useSelector((state) => state.order.all);
+  const menu = useSelector((state) => state.order.menuPrice);
 
   useEffect(() => {
     dispatch(getAllDetailByOrder());
@@ -35,14 +38,41 @@ const History = () => {
     return format.replace(/YYYY|MM|DD|HH|mm|ss/g, (match) => parts[match]);
   };
 
+  const sumPrices = () => {
+    const price = menu * order.table.currentPeople;
+    if (orders.content.length == 0) return 0;
+    return (
+      orders.content.reduce((total, order) => total + order.price, 0) + price
+    );
+  };
+
+  const formatPrice = (price, locale = "it-IT", currency = "EUR") => {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency,
+    }).format(price);
+  };
+
   return (
     <Container>
+      <ListGroup className="mt-2">
+        <ListGroup.Item active variant="secondary">
+          <Row>
+            <Col xs={2}>
+              {" "}
+              Prezzo Totale: {orders.content && formatPrice(sumPrices())}
+            </Col>
+            <Col>
+              <IoPerson /> {order.table ? order.table.currentPeople : 0}
+            </Col>
+          </Row>
+        </ListGroup.Item>
+      </ListGroup>
       {orders.content ? (
         Object.values(viewProduct()).map((element, index) => (
           <ListGroup key={index} className="my-3">
             <ListGroup.Item active>
               {dateFormat(element[0].orderTime, "YYYY-MM-DD HH:mm")}
-              {/* {dateFormat(element[0].orderTime)} */}
             </ListGroup.Item>
             {element.map((order) => (
               <ListGroup.Item key={order.id}>

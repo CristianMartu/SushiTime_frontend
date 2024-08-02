@@ -143,3 +143,7 @@ export const getAllDetailByOrder = () => {
     }
   };
 };
+
+export const SET_MENU_PRICE = "SET_MENU_PRICE";
+
+export const setMenuPrice = (payload) => ({ type: SET_MENU_PRICE, payload });

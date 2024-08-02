@@ -49,6 +49,23 @@ const Products = ({ categoryName }) => {
   const isSaved = (id) =>
     saveAddProduct.findIndex((product) => product.id === id) !== -1;
 
+  const validCategories = ["BEVANDE", "DOLCI", "BIRRE"];
+
+  const getProductPrice = (name, price) => {
+    if (validCategories.includes(name)) {
+      return formatPrice(price);
+    } else {
+      return formatPrice(0);
+    }
+  };
+
+  const formatPrice = (price, locale = "it-IT", currency = "EUR") => {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency,
+    }).format(price);
+  };
+
   return menu ? (
     menu.content.map((product) => {
       const selectedProduct = saveAddProduct.filter((p) => p.id === product.id);
@@ -58,17 +75,19 @@ const Products = ({ categoryName }) => {
         : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg";
 
       return (
-        <Col key={product.id} className="d-flex align-items-stretch">
+        <Col key={product.id} className="d-flex align-items-stretch" xs="auto">
           <Card
             style={{ width: "16rem", maxHeight: "600px" }}
             border={isSaved(product.id) ? "danger" : "info"}
           >
-            <Card.Body>
+            <Card.Body className="d-flex flex-column">
               <Card.Title>
                 {product.number} - {product.name}
               </Card.Title>
               <CardText>{product.description}</CardText>
-              <CardText className="text-info">{product.price} €</CardText>
+              <CardText className="text-info mt-auto">
+                {getProductPrice(product.category.name, product.price)}
+              </CardText>
             </Card.Body>
             <Card.Img
               variant="top"

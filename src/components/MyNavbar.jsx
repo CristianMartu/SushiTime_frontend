@@ -4,7 +4,6 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { CiStar } from "react-icons/ci";
-import { IoHome } from "react-icons/io5";
 import { MdMenuBook } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
@@ -16,6 +15,7 @@ import {
 } from "../redux/actions";
 import { Alert, Button, ListGroup, Modal } from "react-bootstrap";
 import { BsCart } from "react-icons/bs";
+import { RxExit } from "react-icons/rx";
 
 const MyNavbar = () => {
   const dispatch = useDispatch();
@@ -35,12 +35,25 @@ const MyNavbar = () => {
     return acc;
   }, {});
 
+  const validCategories = ["BEVANDE", "DOLCI", "BIRRE"];
+
+  const getProductPrice = (name, price) => {
+    if (validCategories.includes(name)) {
+      return price;
+    } else {
+      return 0;
+    }
+  };
+
   const handleFetch = () => {
     setShow(false);
     const payload = Object.keys(viewProduct).map((number) => ({
       number: Number(number),
       quantity: viewProduct[number].length,
-      price: viewProduct[number][0].price * viewProduct[number].length,
+      price: getProductPrice(
+        viewProduct[number][0].category.name,
+        viewProduct[number][0].price * viewProduct[number].length
+      ),
     }));
 
     if (payload.length > 0) {
@@ -50,6 +63,9 @@ const MyNavbar = () => {
   };
 
   const timeToNewOrder = () => {
+    if (orderDetails.content.length == 0) {
+      return null;
+    }
     const lastOrderTime = new Date(orderDetails.content[0].orderTime);
     const difference = (new Date() - lastOrderTime) / (1000 * 60);
 
@@ -69,7 +85,7 @@ const MyNavbar = () => {
     dispatch(getOrder());
     dispatch(getAllDetailByOrder());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [saveProduct]);
 
   useEffect(() => {
     if (showAlert) {
@@ -98,10 +114,6 @@ const MyNavbar = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <NavLink to={"/"} className="nav-link">
-                <IoHome />
-                Home
-              </NavLink>
-              <NavLink to={"/menu"} className="nav-link">
                 <MdMenuBook />
                 Menù
               </NavLink>
@@ -118,7 +130,15 @@ const MyNavbar = () => {
                   <BsCart />
                 </Button>
               </div>
-              <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+              <NavLink to={"/exit"} className="nav-link">
+                <RxExit />
+                Esci
+              </NavLink>
+              <NavDropdown
+                title="Dropdown"
+                id="basic-nav-dropdown"
+                className="justify-content-end"
+              >
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">
                   Another action
