@@ -7,40 +7,39 @@ const Home = () => {
   const password = localStorage.getItem("adminPassword");
 
   const navigate = useNavigate();
-  const [radioValue, setRadioValue] = useState("/orders");
+  const [getValue, setGetValue] = useState("/");
+  // const [addValue, setAddValue] = useState("/orders");
 
-  const radios = [
-    { name: "Ordini", value: "/orders" },
+  const getFunctions = [
+    { name: "Ordini", value: "/" },
     { name: "Tavoli", value: "/tables" },
     { name: "Prodotti", value: "/products" },
-    { name: "Menu", value: "/" },
   ];
 
   useEffect(() => {
     if (key !== password) {
-      navigate("/");
+      navigate("/menu");
     }
   }, []);
 
   return (
     <Container>
       <ButtonGroup>
-        {radios.map((radio, idx) => (
+        {getFunctions.map((get, idx) => (
           <ToggleButton
             key={idx}
-            id={`radio-${idx}`}
+            id={`get-${idx}`}
             type="radio"
             // variant={idx % 2 ? "outline-primary" : "outline-danger"}
             variant="outline-primary"
-            name="radio"
-            value={radio.value}
-            checked={radioValue === radio.value}
+            value={get.value}
+            checked={getValue === get.value}
             onChange={(e) => {
-              setRadioValue(e.currentTarget.value);
+              setGetValue(e.currentTarget.value);
               navigate(e.currentTarget.value);
             }}
           >
-            {radio.name}
+            {get.name}
           </ToggleButton>
         ))}
       </ButtonGroup>

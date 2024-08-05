@@ -1,7 +1,8 @@
-import { GET_ALL_ORDER } from "../actions";
+import { GET_ALL_ORDER, SET_ID } from "../actions";
 
 const initialState = {
   all: [],
+  id: [],
 };
 
 const orderReducer = (state = initialState, action) => {
@@ -10,6 +11,12 @@ const orderReducer = (state = initialState, action) => {
       return {
         ...state,
         all: action.payload,
+      };
+
+    case SET_ID:
+      return {
+        ...state,
+        id: action.payload,
       };
 
     default:

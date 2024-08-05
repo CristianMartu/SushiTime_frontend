@@ -1,9 +1,8 @@
-import { GET_ALL_DETAIL_BY_ORDER, GET_ORDER, SET_MENU_PRICE } from "../actions";
+import { GET_ALL_DETAIL_BY_ORDER, GET_ORDER } from "../actions";
 
 const initialState = {
   byOrder: [],
   all: [],
-  menuPrice: [16.9],
 };
 
 const orderDetailReducer = (state = initialState, action) => {
@@ -18,12 +17,6 @@ const orderDetailReducer = (state = initialState, action) => {
       return {
         ...state,
         all: action.payload,
-      };
-
-    case SET_MENU_PRICE:
-      return {
-        ...state,
-        menuPrice: action.payload,
       };
 
     default:

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { emptySaveProduct } from "../redux/actions";
 
 const Exit = () => {
+  const dispatch = useDispatch();
   const order = useSelector((state) => state.orderDetail.byOrder);
   const navigate = useNavigate();
 
@@ -19,9 +21,9 @@ const Exit = () => {
       setPasswordError("Password non valida.");
     } else {
       setPasswordError("");
-      console.log("Prova invio");
+      dispatch(emptySaveProduct());
       localStorage.setItem("adminPassword", key);
-      navigate("/orders");
+      navigate("/");
     }
     setPassword("");
   };

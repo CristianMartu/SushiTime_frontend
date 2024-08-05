@@ -6,7 +6,6 @@ import {
   getCategories,
   setActiveCategory,
   setCategoryName,
-  setMenuPrice,
 } from "../redux/actions";
 
 const Menu = () => {
@@ -24,10 +23,8 @@ const Menu = () => {
     const hours = now.getHours();
 
     if (hours >= 9 && hours < 17) {
-      dispatch(setMenuPrice(16.9));
       setMenuType("Menu Pranzo");
     } else {
-      dispatch(setMenuPrice(24.9));
       setMenuType("Menu Cena");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

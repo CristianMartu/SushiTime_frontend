@@ -8,10 +8,9 @@ const History = () => {
   const dispatch = useDispatch();
   const order = useSelector((state) => state.orderDetail.byOrder);
   const orders = useSelector((state) => state.orderDetail.all);
-  const menu = useSelector((state) => state.orderDetail.menuPrice);
 
   useEffect(() => {
-    dispatch(getAllDetailByOrder());
+    dispatch(getAllDetailByOrder(order.id));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -39,10 +38,9 @@ const History = () => {
   };
 
   const sumPrices = () => {
-    const price = menu * order.table.currentPeople;
-    if (orders.content.length == 0) return 0;
+    const price = order.menuPrice * order.table.currentPeople;
     return (
-      orders.content.reduce((total, order) => total + order.price, 0) + price
+      price + orders.content.reduce((total, order) => total + order.price, 0)
     );
   };
 
