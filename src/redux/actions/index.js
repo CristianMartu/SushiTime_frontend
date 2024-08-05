@@ -111,7 +111,7 @@ export const saveOrderDetails = (products, orderId) => {
   return async (dispatch, getState) => {
     console.log("saveOrderDetails", getState());
     try {
-      let response = await fetch(
+      const response = await fetch(
         `${urlBase}/orders/${orderId}/details?size=50`,
         {
           method: "POST",
@@ -167,7 +167,7 @@ export const getAllDetailByOrder = (orderId) => {
 
 // GET ALL ORDER
 
-export const URL_ALL_ORDER = `${urlBase}/orders`;
+export const URL_ALL_ORDER = `${urlBase}/orders?size=50`;
 export const GET_ALL_ORDER = "GET_ALL_ORDER";
 
 export const getAllOrder = (payload) => ({ type: GET_ALL_ORDER, payload });
@@ -214,6 +214,8 @@ export const fetchOrder = (payload) => {
         const errorData = await response.json();
         throw new Error(errorData.message);
       }
+      const data = await response.json();
+      dispatch(setId(data.id));
       dispatch(fetchAllOrder());
       dispatch(fetchAllTable());
     } catch (error) {

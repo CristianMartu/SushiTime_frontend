@@ -4,6 +4,7 @@ import {
   Button,
   ButtonGroup,
   Container,
+  Form,
   Modal,
   Table,
   ToggleButton,
@@ -13,6 +14,7 @@ import {
   fetchAllTable,
   fetchChangeStateOrder,
   fetchOrder,
+  fetchPatchTable,
   setId,
 } from "../../redux/actions";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +31,7 @@ const Order = () => {
   const [showModal2, setShowModal2] = useState(false);
   const [showTable, setShowTable] = useState(false);
   const [showTable2, setShowTable2] = useState(false);
+  const [showBtnUpdate, setShowBtnUpdate] = useState(false);
   const [stateValue, setStateValue] = useState();
 
   const dateFormat = (dateStr, format = "YYYY-MM-DD HH:mm") => {
@@ -42,6 +45,43 @@ const Order = () => {
       ss: String(dateObj.getSeconds()).padStart(2, "0"),
     };
     return format.replace(/YYYY|MM|DD|HH|mm|ss/g, (match) => parts[match]);
+  };
+
+  const [createTable, setCreateTable] = useState({
+    number: "",
+    maxCapacity: "",
+    currentPeople: "",
+    tableId: "",
+  });
+
+  const handleCloseModal = () => {
+    setShowModal2(false);
+    setTimeout(() => {
+      setCreateTable({
+        number: "",
+        maxCapacity: "",
+        currentPeople: "",
+        tableId: "",
+      });
+      setShowBtnUpdate(false);
+    }, 150);
+  };
+
+  const handleChangeCreateTable = (e) => {
+    const { id, value } = e.target;
+    setCreateTable((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+    setShowBtnUpdate(true);
+  };
+
+  const handleSaveChanges = () => {
+    const payload = { ...createTable };
+
+    payload.number = "";
+    console.log("Payload:", payload);
+    dispatch(fetchPatchTable(payload, payload.tableId));
   };
 
   const sumPrices = (order) => {
@@ -76,7 +116,7 @@ const Order = () => {
       menuPrice = 24.9;
     }
     const payload = { tableId: tableId, menuPrice: menuPrice };
-    // dispatch(fetchOrder(payload));
+    dispatch(fetchOrder(payload));
   };
 
   const changeState = () => {
@@ -120,9 +160,15 @@ const Order = () => {
                   return (
                     <tr
                       key={table.id}
-                      // onClick={() => setShowModal2(true)}
                       onClick={() => {
-                        handleCreateOrder(table.id), setShowModal2(true);
+                        handleCreateOrder(table.id);
+                        setCreateTable({
+                          number: table.number,
+                          maxCapacity: table.maxCapacity,
+                          currentPeople: table.currentPeople,
+                          tableId: table.id,
+                        });
+                        setShowModal2(true);
                       }}
                     >
                       <td>{table.number}</td>
@@ -214,14 +260,63 @@ const Order = () => {
           </Table>
         )}
       </Container>
+
       <Modal
         show={showModal2}
-        onHide={() => setShowModal2(false)}
+        onHide={handleCloseModal}
         backdrop="static"
         keyboard={false}
         centered
       >
-        <Modal.Body className="d-flex align-items-center justify-content-between">
+        <Modal.Header closeButton>
+          <Modal.Title>Modifica tavolo</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="number">
+              <Form.Label>Numero</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Inserisci un numero"
+                min="1"
+                step="1"
+                value={createTable.number}
+                readOnly
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="maxCapacity">
+              <Form.Label>Capacità massima</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Inserisci un numero"
+                min="1"
+                step="1"
+                value={createTable.maxCapacity}
+                onChange={handleChangeCreateTable}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="currentPeople">
+              <Form.Label>Persone attuali</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Inserisci un numero"
+                min="1"
+                step="1"
+                value={createTable.currentPeople}
+                onChange={handleChangeCreateTable}
+                autoFocus
+              />
+            </Form.Group>
+          </Form>
+          {showBtnUpdate && (
+            <div className="text-center">
+              <Button variant="outline-primary" onClick={handleSaveChanges}>
+                Modifica
+              </Button>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
           <div className="fs-5 fw-medium">Passa a visualizzazione cliente:</div>
           <div>
             <Button
@@ -235,7 +330,18 @@ const Order = () => {
               <MdMenuBook />
             </Button>
           </div>
-        </Modal.Body>
+          {/* <Button variant="secondary" onClick={handleCloseModal}>
+            Annulla
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              handleCloseModal(), handleSaveChanges();
+            }}
+          >
+            Modifica
+          </Button> */}
+        </Modal.Footer>
       </Modal>
 
       <Modal
