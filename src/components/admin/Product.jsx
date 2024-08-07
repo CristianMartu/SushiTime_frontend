@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Container, Pagination, Table } from "react-bootstrap";
+import { Container, Table } from "react-bootstrap";
 import { fetchAllProduct } from "../../redux/actions";
+import CustomPagination from "../CustomPagination";
 
 const Product = () => {
   const dispatch = useDispatch();
@@ -9,29 +10,13 @@ const Product = () => {
 
   const [currentPage, setCurrentPage] = useState(0);
 
-  useEffect(() => {
-    dispatch(fetchAllProduct(currentPage));
-  }, [currentPage]);
-
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  const renderPaginationItems = () => {
-    const items = [];
-    for (let number = 0; number < data.page.totalPages; number++) {
-      items.push(
-        <Pagination.Item
-          key={number}
-          active={number === currentPage}
-          onClick={() => handlePageChange(number)}
-        >
-          {number + 1}
-        </Pagination.Item>
-      );
-    }
-    return items;
-  };
+  useEffect(() => {
+    dispatch(fetchAllProduct(currentPage));
+  }, [currentPage]);
 
   return (
     <Container>
@@ -70,7 +55,13 @@ const Product = () => {
             ))}
         </tbody>
       </Table>
-      <Pagination>{data.page && renderPaginationItems()}</Pagination>
+      {data.page && data.page.totalPages > 1 && (
+        <CustomPagination
+          totalPages={data.page ? data.page.totalPages : 0}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      )}
     </Container>
   );
 };

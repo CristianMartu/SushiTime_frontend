@@ -6,7 +6,7 @@ import {
   getCategories,
   setActiveCategory,
   setCategoryName,
-} from "../redux/actions";
+} from "../../redux/actions";
 
 const Menu = () => {
   localStorage.setItem("adminPassword", "");

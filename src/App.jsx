@@ -1,16 +1,17 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import MyNavbar from "./components/MyNavbar";
-import Menu from "./components/Menu";
+import MyNavbar from "./components/user/MyNavbar";
+import Menu from "./components/user/Menu";
 import { useEffect } from "react";
-import History from "./components/History";
-import Exit from "./components/Exit";
-import Home from "./components/Home";
+import History from "./components/user/History";
+import Exit from "./components/user/Exit";
+import HomeNavbar from "./components/admin/HomeNavbar";
 import Order from "./components/admin/Order";
 import MyTable from "./components/admin/MyTable";
 import Product from "./components/admin/Product";
 import ErrorHandler from "./components/ErrorHandler";
+import OrderDetail from "./components/admin/OrderDetail";
 
 const Layout = () => (
   <div>
@@ -22,7 +23,7 @@ const Layout = () => (
 
 const Layout2 = () => (
   <div>
-    <Home />
+    <HomeNavbar />
     <ErrorHandler />
     <Outlet />
   </div>
@@ -48,6 +49,7 @@ function App() {
           <Route path="/" element={<Order />} />
           <Route path="/tables" element={<MyTable />} />
           <Route path="/products" element={<Product />} />
+          <Route path="/orderDetail" element={<OrderDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>

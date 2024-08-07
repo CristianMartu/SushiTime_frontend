@@ -11,7 +11,7 @@ import {
   getAllDetailByOrder,
   getOrder,
   saveOrderDetails,
-} from "../redux/actions";
+} from "../../redux/actions";
 import { Button, ListGroup, Modal } from "react-bootstrap";
 import { BsCart } from "react-icons/bs";
 import { RxExit } from "react-icons/rx";

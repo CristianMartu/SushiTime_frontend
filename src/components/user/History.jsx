@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllDetailByOrder } from "../redux/actions";
+import { getAllDetailByOrder } from "../../redux/actions";
 import { Col, Container, ListGroup, Row } from "react-bootstrap";
 import { IoPerson } from "react-icons/io5";
 

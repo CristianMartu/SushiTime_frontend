@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { emptySaveProduct } from "../redux/actions";
+import { emptySaveProduct } from "../../redux/actions";
 
 const Exit = () => {
   const dispatch = useDispatch();

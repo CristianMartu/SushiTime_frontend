@@ -1,23 +1,37 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Container, Form, Modal, Table } from "react-bootstrap";
+import {
+  Button,
+  ButtonGroup,
+  Container,
+  Form,
+  Modal,
+  Table,
+  ToggleButton,
+} from "react-bootstrap";
 import {
   fetchAllTable,
+  fetchDeleteTable,
   fetchPatchTable,
+  fetchPatchTableState,
   fetchSaveTable,
 } from "../../redux/actions";
+import CustomPagination from "../CustomPagination";
 
 const MyTable = () => {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.table.all);
   const [showModal, setShowModal] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [stateValue, setStateValue] = useState();
 
   const [createTable, setCreateTable] = useState({
     number: "",
     maxCapacity: "",
     currentPeople: "",
     tableId: "",
+    state: "",
   });
 
   const handleCloseModal = () => {
@@ -25,11 +39,13 @@ const MyTable = () => {
 
     setTimeout(() => {
       setShowModalUpdate(false);
+      setStateValue();
       setCreateTable({
         number: "",
         maxCapacity: "",
         currentPeople: "",
         tableId: "",
+        state: "",
       });
     }, 150);
   };
@@ -50,12 +66,31 @@ const MyTable = () => {
     if (showModalUpdate) {
       payload.number = "";
       dispatch(fetchPatchTable(payload, payload.tableId));
+      if (stateValue) {
+        const send = { state: stateValue };
+        dispatch(fetchPatchTableState(send, payload.tableId));
+      }
     } else dispatch(fetchSaveTable(payload));
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleDelete = () => {
+    handleCloseModal();
+    dispatch(fetchDeleteTable(createTable.tableId));
+  };
+
+  const getState = [
+    { name: "AVAILABLE", value: "AVAILABLE" },
+    { name: "RESERVED", value: "RESERVED" },
+    { name: "OUT_OF_SERVICE", value: "OUT_OF_SERVICE" },
+  ];
+
   useEffect(() => {
-    dispatch(fetchAllTable());
-  }, []);
+    dispatch(fetchAllTable(currentPage));
+  }, [currentPage]);
 
   return (
     <>
@@ -76,7 +111,7 @@ const MyTable = () => {
               <th>Numero tavolo</th>
               <th>Massima capacità</th>
               <th>Persone correnti</th>
-              <th>Stato ordine</th>
+              <th>Stato</th>
             </tr>
           </thead>
           <tbody>
@@ -90,6 +125,7 @@ const MyTable = () => {
                       maxCapacity: table.maxCapacity,
                       currentPeople: table.currentPeople,
                       tableId: table.id,
+                      state: table.state,
                     });
                     setShowModal(true);
                     setShowModalUpdate(true);
@@ -103,6 +139,13 @@ const MyTable = () => {
               ))}
           </tbody>
         </Table>
+        {data.page && data.page.totalPages > 1 && (
+          <CustomPagination
+            totalPages={data.page.totalPages}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        )}
         <Button className="mb-3" onClick={() => setShowModal(true)}>
           Aggiungi tavolo
         </Button>
@@ -160,11 +203,36 @@ const MyTable = () => {
               </Form.Group>
             )}
           </Form>
+          <ButtonGroup>
+            {showModalUpdate &&
+              createTable.state != "OCCUPIED" &&
+              getState.map((state, idx) => (
+                <ToggleButton
+                  key={idx}
+                  id={`state-${idx}`}
+                  type="radio"
+                  // variant={idx % 2 ? "outline-primary" : "outline-danger"}
+                  variant="outline-primary"
+                  value={state.value}
+                  checked={stateValue === state.value}
+                  onChange={(e) => {
+                    setStateValue(e.currentTarget.value);
+                  }}
+                >
+                  {state.name}
+                </ToggleButton>
+              ))}
+          </ButtonGroup>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
             Annulla
           </Button>
+          {showModalUpdate && (
+            <Button variant="outline-danger" onClick={handleDelete}>
+              Elimina
+            </Button>
+          )}
           <Button
             variant="primary"
             onClick={() => {

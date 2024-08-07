@@ -11,7 +11,8 @@ import {
 } from "react-bootstrap";
 import {
   fetchAllOrder,
-  fetchAllTable,
+  fetchAllOrderState,
+  fetchAllTableState,
   fetchChangeStateOrder,
   fetchOrder,
   fetchPatchTable,
@@ -19,13 +20,16 @@ import {
 } from "../../redux/actions";
 import { useNavigate } from "react-router-dom";
 import { MdMenuBook } from "react-icons/md";
+import CustomPagination from "../CustomPagination";
+import { CiStar } from "react-icons/ci";
 
 const Order = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const data = useSelector((state) => state.order.all);
+  const orderByState = useSelector((state) => state.order.allByState);
   const orderId = useSelector((state) => state.order.id);
-  const tables = useSelector((state) => state.table.all);
+  const tables = useSelector((state) => state.table.allByState);
 
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
@@ -33,6 +37,27 @@ const Order = () => {
   const [showTable2, setShowTable2] = useState(false);
   const [showBtnUpdate, setShowBtnUpdate] = useState(false);
   const [stateValue, setStateValue] = useState();
+  const [selectedOrder, setSelectedOrder] = useState();
+
+  const [currentPageTable, setCurrentPageTable] = useState(0);
+  const [currentPageOrderState, setCurrentPageOrderState] = useState(0);
+  const [currentPageOrder, setCurrentPageOrder] = useState(0);
+
+  const handlePageChangeTable = (pageNumber) => {
+    setCurrentPageTable(pageNumber);
+  };
+
+  const handlePageChangeOrderState = (pageNumber) => {
+    setCurrentPageOrderState(pageNumber);
+  };
+
+  const handlePageChangeOrder = (pageNumber) => {
+    setCurrentPageOrder(pageNumber);
+  };
+
+  const handleToOrderDetail = () => {
+    navigate("/orderDetail");
+  };
 
   const dateFormat = (dateStr, format = "YYYY-MM-DD HH:mm") => {
     const dateObj = new Date(dateStr);
@@ -100,7 +125,6 @@ const Order = () => {
   };
 
   const getState = [
-    // { name: "IN_PROGRESS", value: "IN_PROGRESS" },
     { name: "PAID", value: "PAID" },
     { name: "CANCELED", value: "CANCELED" },
   ];
@@ -129,9 +153,16 @@ const Order = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchAllOrder());
-    dispatch(fetchAllTable());
-  }, []);
+    dispatch(fetchAllTableState(currentPageTable));
+  }, [currentPageTable]);
+
+  useEffect(() => {
+    dispatch(fetchAllOrderState(currentPageOrderState));
+  }, [currentPageOrderState]);
+
+  useEffect(() => {
+    dispatch(fetchAllOrder(currentPageOrder));
+  }, [currentPageOrder]);
 
   return (
     <>
@@ -181,83 +212,105 @@ const Order = () => {
               })}
           </tbody>
         </Table>
+        {tables.page && tables.page.totalPages > 1 && (
+          <CustomPagination
+            totalPages={tables.page ? tables.page.totalPages : 0}
+            currentPage={currentPageTable}
+            onPageChange={handlePageChangeTable}
+          />
+        )}
         <Button className="mb-3 d-block" onClick={() => handleShowTable()}>
-          Visualizza ordini in corso
+          Modifica ordini in corso
         </Button>
         {showTable && (
-          <Table
-            striped
-            bordered
-            hover
-            variant="secondary"
-            className="text-center"
-            responsive="sm"
-          >
-            <thead>
-              <tr>
-                <th>Tavolo associato</th>
-                <th>Data</th>
-                <th>Stato</th>
-                <th>Prezzo totale</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.content &&
-                data.content.map(
-                  (order) =>
-                    order.state === "IN_PROGRESS" && (
-                      <tr
-                        key={order.id}
-                        onClick={() => {
-                          dispatch(setId(order.id));
-                          setShowModal(true);
-                        }}
-                      >
-                        <td>{order.table.number}</td>
-                        <td>{dateFormat(order.date)}</td>
-                        <td>{order.state}</td>
-                        <td>{formatPrice(sumPrices(order))}</td>
-                      </tr>
-                    )
-                )}
-            </tbody>
-          </Table>
+          <>
+            <Table
+              striped
+              bordered
+              hover
+              variant="secondary"
+              className="text-center"
+              responsive="sm"
+            >
+              <thead>
+                <tr>
+                  <th>Tavolo associato</th>
+                  <th>Data</th>
+                  <th>Stato</th>
+                  <th>Prezzo totale</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderByState.content &&
+                  orderByState.content.map((order) => (
+                    <tr
+                      key={order.id}
+                      onClick={() => {
+                        setSelectedOrder(order);
+                        dispatch(setId(order.id));
+                        setShowModal(true);
+                      }}
+                    >
+                      <td>{order.table.number}</td>
+                      <td>{dateFormat(order.date)}</td>
+                      <td>{order.state}</td>
+                      <td>{formatPrice(sumPrices(order))}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+            {orderByState.page && orderByState.page.totalPages > 1 && (
+              <CustomPagination
+                totalPages={
+                  orderByState.page ? orderByState.page.totalPages : 0
+                }
+                currentPage={currentPageOrderState}
+                onPageChange={handlePageChangeOrderState}
+              />
+            )}
+          </>
         )}
         <Button className="mb-3" onClick={() => setShowTable2(!showTable2)}>
           Visualizza storico ordini
         </Button>
         {showTable2 && (
-          <Table
-            striped
-            bordered
-            hover
-            variant="dark"
-            className="text-center"
-            responsive="sm"
-          >
-            <thead>
-              <tr>
-                <th>Tavolo associato</th>
-                <th>Data</th>
-                <th>Stato</th>
-                <th>Prezzo totale</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.content &&
-                data.content.map(
-                  (order) =>
-                    order.state !== "IN_PROGRESS" && (
-                      <tr key={order.id}>
-                        <td>{order.table.number}</td>
-                        <td>{dateFormat(order.date)}</td>
-                        <td>{order.state}</td>
-                        <td>{formatPrice(sumPrices(order))}</td>
-                      </tr>
-                    )
-                )}
-            </tbody>
-          </Table>
+          <>
+            <Table
+              striped
+              bordered
+              hover
+              variant="dark"
+              className="text-center"
+              responsive="sm"
+            >
+              <thead>
+                <tr>
+                  <th>Tavolo associato</th>
+                  <th>Data</th>
+                  <th>Stato</th>
+                  <th>Prezzo totale</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.content &&
+                  data.content.map((order) => (
+                    <tr key={order.id}>
+                      <td>{order.table.number}</td>
+                      <td>{dateFormat(order.date)}</td>
+                      <td>{order.state}</td>
+                      <td>{formatPrice(sumPrices(order))}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+            {data.page && data.page.totalPages > 1 && (
+              <CustomPagination
+                totalPages={data.page ? data.page.totalPages : 0}
+                currentPage={currentPageOrder}
+                onPageChange={handlePageChangeOrder}
+              />
+            )}
+          </>
         )}
       </Container>
 
@@ -330,17 +383,6 @@ const Order = () => {
               <MdMenuBook />
             </Button>
           </div>
-          {/* <Button variant="secondary" onClick={handleCloseModal}>
-            Annulla
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              handleCloseModal(), handleSaveChanges();
-            }}
-          >
-            Modifica
-          </Button> */}
         </Modal.Footer>
       </Modal>
 
@@ -388,9 +430,18 @@ const Order = () => {
             </Button>
           )}
         </Modal.Body>
+        {selectedOrder && selectedOrder.orderDetails.length > 0 && (
+          <Modal.Footer>
+            <h6 className="m-0 me-2 align-self-center">
+              Modifica dettagli ordine
+            </h6>
+            <Button onClick={handleToOrderDetail}>
+              <CiStar />
+            </Button>
+          </Modal.Footer>
+        )}
         <Modal.Footer>
           <h6>Passa a visuallizzazione CLIENTE:</h6>
-          {/* <Button onClick={() => handleOrder()}> */}
           <Button onClick={() => navigate("/menu")}>
             <MdMenuBook />
           </Button>

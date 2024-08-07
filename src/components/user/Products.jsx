@@ -3,7 +3,7 @@ import { Card, CardFooter, CardText, Col } from "react-bootstrap";
 import { FaMinus } from "react-icons/fa6";
 import { TiPlus } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
-import { addProduct, removeProduct } from "../redux/actions";
+import { addProduct, removeProduct } from "../../redux/actions";
 
 const Products = ({ categoryName }) => {
   const token = localStorage.getItem("authToken");
@@ -18,7 +18,7 @@ const Products = ({ categoryName }) => {
   const [menu, setMenu] = useState();
 
   const menuFetch = async () => {
-    console.log(categoryName);
+    // console.log(categoryName);
     try {
       const response = await fetch(URL, {
         method: "POST",
@@ -31,7 +31,7 @@ const Products = ({ categoryName }) => {
       if (response.ok) {
         const data = await response.json();
         setMenu(data);
-        console.log(data);
+        // console.log(data);
       } else {
         alert("Errore nella fetch ");
       }
