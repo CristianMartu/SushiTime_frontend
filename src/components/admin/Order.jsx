@@ -275,6 +275,7 @@ const Order = () => {
         </Button>
         {showTable2 && (
           <>
+            <h4>Ordini totali: {data.page && data.page.totalElements}</h4>
             <Table
               striped
               bordered

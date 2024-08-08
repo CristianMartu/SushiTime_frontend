@@ -7,8 +7,7 @@ import { MdMenuBook } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import {
-  // emptyErrorDetails,
-  getAllDetailByOrder,
+  fetchAllDetailByOrder,
   getOrder,
   saveOrderDetails,
 } from "../../redux/actions";
@@ -81,7 +80,7 @@ const MyNavbar = () => {
 
   useEffect(() => {
     dispatch(getOrder(orderId));
-    dispatch(getAllDetailByOrder(orderId));
+    dispatch(fetchAllDetailByOrder(orderId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveProduct]);
 

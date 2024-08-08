@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllDetailByOrder } from "../../redux/actions";
+import { fetchAllDetailByOrder } from "../../redux/actions";
 import { Col, Container, ListGroup, Row } from "react-bootstrap";
 import { IoPerson } from "react-icons/io5";
 
@@ -10,7 +10,7 @@ const History = () => {
   const orders = useSelector((state) => state.orderDetail.all);
 
   useEffect(() => {
-    dispatch(getAllDetailByOrder(order.id));
+    dispatch(fetchAllDetailByOrder(order.id));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

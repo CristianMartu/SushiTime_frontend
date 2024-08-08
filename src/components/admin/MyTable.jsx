@@ -65,12 +65,12 @@ const MyTable = () => {
 
     if (showModalUpdate) {
       payload.number = "";
-      dispatch(fetchPatchTable(payload, payload.tableId));
+      dispatch(fetchPatchTable(payload, payload.tableId, currentPage));
       if (stateValue) {
         const send = { state: stateValue };
-        dispatch(fetchPatchTableState(send, payload.tableId));
+        dispatch(fetchPatchTableState(send, payload.tableId, currentPage));
       }
-    } else dispatch(fetchSaveTable(payload));
+    } else dispatch(fetchSaveTable(payload, currentPage));
   };
 
   const handlePageChange = (pageNumber) => {

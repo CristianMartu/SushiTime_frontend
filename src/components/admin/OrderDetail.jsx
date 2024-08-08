@@ -20,7 +20,6 @@ const OrderDetail = () => {
   const orderDetails = useSelector((state) => state.orderDetail.orders);
   const orderId = useSelector((state) => state.order.id);
   const order = useSelector((state) => state.orderDetail.byOrder);
-  // const orderDetailsByOrder = useSelector((state) => state.orderDetail.all);
   const [showModal, setShowModal] = useState(false);
   const [detailOrder, setDetailOrder] = useState();
 
@@ -41,17 +40,19 @@ const OrderDetail = () => {
   const handleSaveChanges = () => {
     console.log(stateValue);
     const payload = { state: stateValue };
-    dispatch(fetchUpdateOrderDetail(payload, detailOrder, currentPage));
+    dispatch(
+      fetchUpdateOrderDetail(payload, detailOrder, currentPage, orderId)
+    );
   };
 
   const [currentPage, setCurrentPage] = useState(0);
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
   useEffect(() => {
     dispatch(fetchAllOrderDetail(currentPage));
     if (orderId) {
-      // dispatch(getAllDetailByOrder(orderId));
       dispatch(getOrder(orderId));
     }
   }, [currentPage]);
@@ -106,48 +107,51 @@ const OrderDetail = () => {
             onPageChange={handlePageChange}
           />
         )}
-        {orderId && order && order.orderDetails.length > 0 && (
-          <>
-            <h5>Dettagli ordinazioni tavolo {order.table.number}</h5>
-            <Table
-              striped
-              bordered
-              hover
-              variant="secondary"
-              className="text-center"
-              responsive="sm"
-            >
-              <thead>
-                <tr>
-                  <th>Data ordinazione</th>
-                  <th>Quantità</th>
-                  <th>Numero prodotto</th>
-                  <th>Nome prodotto</th>
-                  <th>Stato ordinazione</th>
-                </tr>
-              </thead>
-              <tbody>
-                {order.orderDetails.map((detail) => (
-                  <tr
-                    key={detail.id}
-                    onClick={() => {
-                      if (detail.state === "IN_PROGRESS") {
-                        setShowModal(true);
-                        setDetailOrder(detail.id);
-                      }
-                    }}
-                  >
-                    <td>{detail.orderTime}</td>
-                    <td>{detail.quantity}</td>
-                    <td>{detail.product.number}</td>
-                    <td>{detail.product.name}</td>
-                    <td>{detail.state}</td>
+        {orderId &&
+          order &&
+          order.orderDetails &&
+          order.orderDetails.length > 0 && (
+            <>
+              <h5>Dettagli ordinazioni tavolo {order.table.number}</h5>
+              <Table
+                striped
+                bordered
+                hover
+                variant="secondary"
+                className="text-center"
+                responsive="sm"
+              >
+                <thead>
+                  <tr>
+                    <th>Data ordinazione</th>
+                    <th>Quantità</th>
+                    <th>Numero prodotto</th>
+                    <th>Nome prodotto</th>
+                    <th>Stato ordinazione</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          </>
-        )}
+                </thead>
+                <tbody>
+                  {order.orderDetails.map((detail) => (
+                    <tr
+                      key={detail.id}
+                      onClick={() => {
+                        if (detail.state === "IN_PROGRESS") {
+                          setShowModal(true);
+                          setDetailOrder(detail.id);
+                        }
+                      }}
+                    >
+                      <td>{detail.orderTime}</td>
+                      <td>{detail.quantity}</td>
+                      <td>{detail.product.number}</td>
+                      <td>{detail.product.name}</td>
+                      <td>{detail.state}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </>
+          )}
       </Container>
       <Modal
         show={showModal}

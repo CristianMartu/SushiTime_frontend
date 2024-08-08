@@ -144,7 +144,7 @@ export const getAllOrderDetail = (payload) => ({
 // GET ALL ORDER DETAIL
 export const fetchAllOrderDetail = (page = 0) => {
   return async (dispatch, getState) => {
-    console.log("getAllOrderDetail", getState());
+    console.log("fetchAllOrderDetail", getState());
     try {
       const response = await fetch(
         `${urlBase}/orders/details/state?page=${page}`,
@@ -160,7 +160,7 @@ export const fetchAllOrderDetail = (page = 0) => {
         throw new Error(errorData.message);
       }
       const data = await response.json();
-      dispatch({ type: "GET_ALL_ORDER_DETAIL", payload: data });
+      dispatch(getAllOrderDetail(data));
     } catch (error) {
       console.log(error);
       dispatch(handleError(error.message));
@@ -170,10 +170,14 @@ export const fetchAllOrderDetail = (page = 0) => {
 
 // GET ALL ORDER DETAIL BY ORDER
 export const GET_ALL_DETAIL_BY_ORDER = "GET_ALL_DETAIL_BY_ORDER";
+export const getAllDetailByOrder = (payload) => ({
+  type: GET_ALL_DETAIL_BY_ORDER,
+  payload,
+});
 
-export const getAllDetailByOrder = (orderId) => {
+export const fetchAllDetailByOrder = (orderId) => {
   return async (dispatch, getState) => {
-    console.log("getAllDetailByOrder", getState());
+    console.log("fetchAllDetailByOrder", getState());
     try {
       const response = await fetch(
         `${urlBase}/orders/${orderId}/details?size=20`,
@@ -190,7 +194,7 @@ export const getAllDetailByOrder = (orderId) => {
         throw new Error(errorData.message);
       }
       const data = await response.json();
-      dispatch({ type: "GET_ALL_DETAIL_BY_ORDER", payload: data });
+      dispatch(getAllDetailByOrder(data));
     } catch (error) {
       console.log(error);
       dispatch(handleError(error.message));
@@ -199,7 +203,12 @@ export const getAllDetailByOrder = (orderId) => {
 };
 
 // POST ORDER DETAIL
-export const fetchUpdateOrderDetail = (payload, orderDetailId, page = 0) => {
+export const fetchUpdateOrderDetail = (
+  payload,
+  orderDetailId,
+  page = 0,
+  orderId
+) => {
   return async (dispatch, getState) => {
     console.log("getAllDetailByOrder", getState());
     try {
@@ -219,6 +228,7 @@ export const fetchUpdateOrderDetail = (payload, orderDetailId, page = 0) => {
       const data = await response.json();
       dispatch({ type: "GET_ALL_DETAIL_BY_ORDER", payload: data });
       dispatch(fetchAllOrderDetail(page));
+      dispatch(getOrder(orderId));
     } catch (error) {
       console.log(error);
       dispatch(handleError(error.message));
@@ -242,7 +252,7 @@ export const fetchAllOrder = (page = 0) => {
   return async (dispatch, getState) => {
     console.log("fetchAllOrder", getState());
     try {
-      let response = await fetch(URL_ALL_ORDER + page, {
+      const response = await fetch(URL_ALL_ORDER + page, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -266,7 +276,7 @@ export const fetchAllOrderState = (page = 0) => {
   return async (dispatch, getState) => {
     console.log("fetchAllOrderState", getState());
     try {
-      let response = await fetch(URL_ALL_ORDER_STATE + page, {
+      const response = await fetch(URL_ALL_ORDER_STATE + page, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -291,7 +301,7 @@ export const fetchOrder = (payload) => {
   return async (dispatch, getState) => {
     console.log("fetchSaveOrder", getState());
     try {
-      let response = await fetch(URL_ALL_ORDER, {
+      const response = await fetch(URL_ALL_ORDER, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -322,7 +332,7 @@ export const fetchChangeStateOrder = (payload, orderId) => {
   return async (dispatch, getState) => {
     console.log("fetchAllOrder", getState());
     try {
-      let response = await fetch(`${urlBase}/orders/${orderId}/state`, {
+      const response = await fetch(`${urlBase}/orders/${orderId}/state`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -362,7 +372,7 @@ export const fetchAllTable = (page = 0) => {
   return async (dispatch, getState) => {
     console.log("fetchAllTable", getState());
     try {
-      let response = await fetch(URL_ALL_TABLE + page, {
+      const response = await fetch(URL_ALL_TABLE + page, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -386,7 +396,7 @@ export const fetchAllTableState = (page = 0) => {
   return async (dispatch, getState) => {
     console.log("fetchAllTableState", getState());
     try {
-      let response = await fetch(URL_ALL_TABLE_STATE + page, {
+      const response = await fetch(URL_ALL_TABLE_STATE + page, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -407,11 +417,11 @@ export const fetchAllTableState = (page = 0) => {
 };
 
 // POST TABLE
-export const fetchSaveTable = (payload) => {
+export const fetchSaveTable = (payload, page = 0) => {
   return async (dispatch, getState) => {
     console.log("fetchSaveTable", getState());
     try {
-      let response = await fetch(`${urlBase}/tables`, {
+      const response = await fetch(`${urlBase}/tables`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -423,8 +433,8 @@ export const fetchSaveTable = (payload) => {
         const errorData = await response.json();
         throw new Error(errorData.message);
       }
-      dispatch(fetchAllTable());
-      dispatch(fetchAllTableState());
+      dispatch(fetchAllTable(page));
+      dispatch(fetchAllTableState(page));
     } catch (error) {
       console.log(error);
       dispatch(handleError(error.message));
@@ -433,11 +443,11 @@ export const fetchSaveTable = (payload) => {
 };
 
 // PATCH TABLE
-export const fetchPatchTable = (payload, tableId) => {
+export const fetchPatchTable = (payload, tableId, page = 0) => {
   return async (dispatch, getState) => {
-    console.log("fetchSaveTable", getState());
+    console.log("fetchPatchTable", getState());
     try {
-      let response = await fetch(`${urlBase}/tables/${tableId}/number`, {
+      const response = await fetch(`${urlBase}/tables/${tableId}/number`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -449,8 +459,8 @@ export const fetchPatchTable = (payload, tableId) => {
         const errorData = await response.json();
         throw new Error(errorData.message);
       }
-      dispatch(fetchAllTable());
-      dispatch(fetchAllTableState());
+      dispatch(fetchAllTable(page));
+      dispatch(fetchAllTableState(page));
     } catch (error) {
       console.log(error);
       dispatch(handleError(error.message));
@@ -459,11 +469,11 @@ export const fetchPatchTable = (payload, tableId) => {
 };
 
 // PATCH TABLE STATE
-export const fetchPatchTableState = (payload, tableId) => {
+export const fetchPatchTableState = (payload, tableId, page = 0) => {
   return async (dispatch, getState) => {
-    console.log("fetchSaveTable", getState());
+    console.log("fetchPatchTableState", getState());
     try {
-      let response = await fetch(`${urlBase}/tables/${tableId}/state`, {
+      const response = await fetch(`${urlBase}/tables/${tableId}/state`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -475,8 +485,8 @@ export const fetchPatchTableState = (payload, tableId) => {
         const errorData = await response.json();
         throw new Error(errorData.message);
       }
-      dispatch(fetchAllTable());
-      dispatch(fetchAllTableState());
+      dispatch(fetchAllTable(page));
+      dispatch(fetchAllTableState(page));
     } catch (error) {
       console.log(error);
       dispatch(handleError(error.message));
@@ -487,9 +497,9 @@ export const fetchPatchTableState = (payload, tableId) => {
 // DELETE TABLE
 export const fetchDeleteTable = (tableId) => {
   return async (dispatch, getState) => {
-    console.log("fetchSaveTable", getState());
+    console.log("fetchDeleteTable", getState());
     try {
-      let response = await fetch(`${urlBase}/tables/${tableId}`, {
+      const response = await fetch(`${urlBase}/tables/${tableId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -515,11 +525,11 @@ export const GET_ALL_PRODUCT = "GET_ALL_PRODUCT";
 
 export const getAllProduct = (payload) => ({ type: GET_ALL_PRODUCT, payload });
 
-export const fetchAllProduct = (page) => {
+export const fetchAllProduct = (page = 0) => {
   return async (dispatch, getState) => {
     console.log("fetchAllProduct", getState());
     try {
-      let response = await fetch(URL_ALL_PRODUCT + page, {
+      const response = await fetch(URL_ALL_PRODUCT + page, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -532,6 +542,80 @@ export const fetchAllProduct = (page) => {
       }
       const data = await response.json();
       dispatch(getAllProduct(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(handleError(error.message));
+    }
+  };
+};
+
+// ADD PRODUCT
+export const fetchSaveProduct = (payload, page = 0) => {
+  return async (dispatch, getState) => {
+    console.log("fetchSaveProduct", getState());
+    try {
+      const response = await fetch(`${urlBase}/products`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      dispatch(fetchAllProduct(page));
+    } catch (error) {
+      console.log(error);
+      dispatch(handleError(error.message));
+    }
+  };
+};
+
+// PUT PRODUCT
+export const fetchPutProduct = (payload, productId, page) => {
+  return async (dispatch, getState) => {
+    console.log("fetchPutProduct", getState());
+    try {
+      const response = await fetch(`${urlBase}/products/${productId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      dispatch(fetchAllProduct(page));
+    } catch (error) {
+      console.log(error);
+      dispatch(handleError(error.message));
+    }
+  };
+};
+
+// DELETE PRODUCT
+export const fetchDeleteProduct = (productId, page = 0) => {
+  return async (dispatch, getState) => {
+    console.log("fetchDeleteProduct", getState());
+    try {
+      const response = await fetch(`${urlBase}/products/${productId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      dispatch(fetchAllProduct(page));
     } catch (error) {
       console.log(error);
       dispatch(handleError(error.message));
