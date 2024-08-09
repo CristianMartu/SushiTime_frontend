@@ -51,7 +51,7 @@ const Login = () => {
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="text"
-              placeholder="nome.cognome@gmail.com"
+              placeholder="inserire email"
               value={login.email}
               onChange={handleChangeLogin}
               autoFocus
@@ -62,7 +62,7 @@ const Login = () => {
             <Form.Label>Password</Form.Label>
             <Form.Control
               type="password"
-              placeholder="inserire una password"
+              placeholder="inserire password"
               value={login.password}
               onChange={handleChangeLogin}
               required

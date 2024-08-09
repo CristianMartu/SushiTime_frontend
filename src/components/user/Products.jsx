@@ -42,6 +42,7 @@ const Products = ({ categoryName }) => {
 
   useEffect(() => {
     menuFetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryName]);
 
   const saveAddProduct = useSelector((state) => state.product.content);

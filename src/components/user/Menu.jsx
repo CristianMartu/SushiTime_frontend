@@ -33,7 +33,7 @@ const Menu = () => {
   return (
     <div className="d-flex">
       <ListGroup as="ul" style={{ width: "20rem" }}>
-        <ListGroup.Item variant="secondary" className="text-center">
+        <ListGroup.Item className="text-center">
           <Button>{menuType}</Button>
         </ListGroup.Item>
         {category.content ? (
