@@ -60,8 +60,8 @@ const Menu = () => {
         )}
       </ListGroup>
 
-      <Container className="my-4">
-        <Row className="row-gap-3" style={{ height: "400px" }}>
+      <Container>
+        <Row className="row-gap-3 my-4" style={{ height: "400px" }}>
           {category.content ? (
             <Products categoryName={name || category.content[0]?.name} />
           ) : (

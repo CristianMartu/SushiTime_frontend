@@ -59,10 +59,9 @@ const MyTable = () => {
   };
 
   const handleSaveChanges = () => {
+    handleCloseModal();
     const payload = { ...createTable };
-
-    console.log("Payload:", payload);
-
+    // console.log("Payload:", payload);
     if (showModalUpdate) {
       payload.number = "";
       dispatch(fetchPatchTable(payload, payload.tableId, currentPage));
@@ -90,6 +89,7 @@ const MyTable = () => {
 
   useEffect(() => {
     dispatch(fetchAllTable(currentPage));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   return (
@@ -98,6 +98,9 @@ const MyTable = () => {
         <h3 className="my-3">
           Tavoli totali: {data.page && data.page.totalElements}
         </h3>
+        <Button className="mb-3" onClick={() => setShowModal(true)}>
+          Aggiungi tavolo
+        </Button>
         <Table
           striped
           bordered
@@ -146,9 +149,6 @@ const MyTable = () => {
             onPageChange={handlePageChange}
           />
         )}
-        <Button className="mb-3" onClick={() => setShowModal(true)}>
-          Aggiungi tavolo
-        </Button>
       </Container>
       <Modal
         show={showModal}
@@ -211,7 +211,6 @@ const MyTable = () => {
                   key={idx}
                   id={`state-${idx}`}
                   type="radio"
-                  // variant={idx % 2 ? "outline-primary" : "outline-danger"}
                   variant="outline-primary"
                   value={state.value}
                   checked={stateValue === state.value}
@@ -233,12 +232,7 @@ const MyTable = () => {
               Elimina
             </Button>
           )}
-          <Button
-            variant="primary"
-            onClick={() => {
-              handleCloseModal(), handleSaveChanges();
-            }}
-          >
+          <Button variant="primary" onClick={handleSaveChanges}>
             {showModalUpdate ? "Modifica" : "Salva"}
           </Button>
         </Modal.Footer>

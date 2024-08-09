@@ -86,6 +86,7 @@ const Product = () => {
 
   useEffect(() => {
     dispatch(fetchAllProduct(currentPage));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   return (
@@ -162,7 +163,7 @@ const Product = () => {
       >
         <Form onSubmit={handleSubmit}>
           <Modal.Header closeButton>
-            {showModalUpdate ? "Modifica prodotto" : "Nuovo prodotto"}
+            <h3>{showModalUpdate ? "Modifica prodotto" : "Nuovo prodotto"}</h3>
           </Modal.Header>
           <Modal.Body>
             <Form.Group className="mb-3" controlId="name">
@@ -176,8 +177,8 @@ const Product = () => {
                 }
                 value={attProduct.name}
                 onChange={handleChangeAttProduct}
-                autoFocus={showModalUpdate && false}
-                required={showModalUpdate && false}
+                autoFocus={showModalUpdate ? false : true}
+                required={showModalUpdate ? false : true}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="description">
@@ -191,7 +192,7 @@ const Product = () => {
                 }
                 value={attProduct.description}
                 onChange={handleChangeAttProduct}
-                required={showModalUpdate && false}
+                required={showModalUpdate ? false : true}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="price">
@@ -207,7 +208,7 @@ const Product = () => {
                 }
                 value={attProduct.price}
                 onChange={handleChangeAttProduct}
-                required={showModalUpdate && false}
+                required={showModalUpdate ? false : true}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="image">
@@ -221,7 +222,7 @@ const Product = () => {
                 }
                 value={attProduct.image}
                 onChange={handleChangeAttProduct}
-                required={showModalUpdate && false}
+                required={showModalUpdate ? false : true}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="number">
@@ -236,7 +237,7 @@ const Product = () => {
                 }
                 value={attProduct.number}
                 onChange={handleChangeAttProduct}
-                required={showModalUpdate && false}
+                required={showModalUpdate ? false : true}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="category">
@@ -250,7 +251,7 @@ const Product = () => {
                 }
                 value={attProduct.category}
                 onChange={handleChangeAttProduct}
-                required={showModalUpdate && false}
+                required={showModalUpdate ? false : true}
               />
             </Form.Group>
           </Modal.Body>

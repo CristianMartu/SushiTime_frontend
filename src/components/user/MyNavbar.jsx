@@ -79,14 +79,22 @@ const MyNavbar = () => {
   };
 
   useEffect(() => {
-    dispatch(getOrder(orderId));
-    dispatch(fetchAllDetailByOrder(orderId));
+    console.log(orderId);
+    if (orderId) {
+      dispatch(getOrder(orderId));
+      dispatch(fetchAllDetailByOrder(orderId));
+    } else {
+      const id = localStorage.getItem("orderId");
+      dispatch(getOrder(id));
+      dispatch(fetchAllDetailByOrder(id));
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveProduct]);
 
   return (
     <>
-      <Navbar expand="lg" className="bg-body-tertiary">
+      <Navbar expand="lg" className="bg-body-tertiary sticky-top">
         <Container>
           <Navbar.Brand as={NavLink} to={"/menu"}>
             Tavolo {order.table ? order.table.number : 0}

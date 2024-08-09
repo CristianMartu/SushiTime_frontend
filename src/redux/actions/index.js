@@ -9,8 +9,6 @@ export const SET_ID = "SET_ID";
 
 export const setId = (payload) => ({ type: SET_ID, payload });
 
-// const orderId = "84342983-1a44-485c-ba97-7b03f69c1281";
-// const URL_ORDER = `${urlBase}/orders/${orderId}`;
 const URL_ORDER = `${urlBase}/orders/`;
 
 export const getOrder = (orderId) => {
@@ -316,6 +314,7 @@ export const fetchOrder = (payload) => {
       }
       const data = await response.json();
       dispatch(setId(data.id));
+      localStorage.setItem("orderId", data.id);
       dispatch(fetchAllOrder());
       dispatch(fetchAllOrderState());
       dispatch(fetchAllTable());
@@ -616,6 +615,188 @@ export const fetchDeleteProduct = (productId, page = 0) => {
         throw new Error(errorData.message);
       }
       dispatch(fetchAllProduct(page));
+    } catch (error) {
+      console.log(error);
+      dispatch(handleError(error.message));
+    }
+  };
+};
+
+// LOGIN
+export const fetchLogin = (payload) => {
+  return async () => {
+    try {
+      const response = await fetch(`${urlBase}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      const data = await response.json();
+      localStorage.setItem("authToken", data.accessToken);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+};
+
+export const CURRENT_USER = "CURRENT_USER";
+export const setCurrentUser = (payload) => ({ type: CURRENT_USER, payload });
+export const URL_CURRENT_USER = `${urlBase}/users/profile`;
+
+// CURRENT USER
+export const fetchCurrentUser = () => {
+  return async (dispatch, getState) => {
+    console.log("fetchCurrentUser", getState());
+    try {
+      const response = await fetch(URL_CURRENT_USER, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      const data = await response.json();
+      dispatch(setCurrentUser(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(handleError(error.message));
+    }
+  };
+};
+
+// PUT CURRENT USER
+export const fetchPutCurrentUser = (payload) => {
+  return async (dispatch, getState) => {
+    console.log("fetchPutCurrentUser", getState());
+    try {
+      const response = await fetch(URL_CURRENT_USER, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      const data = await response.json();
+      dispatch(setCurrentUser(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(handleError(error.message));
+    }
+  };
+};
+
+export const URL_ALL_USER = `${urlBase}/users?page=`;
+export const ALL_USER = "ALL_USER";
+export const setAllUser = (payload) => ({ type: ALL_USER, payload });
+
+// GET ALL USERS
+export const fetchAllUser = (page = 0) => {
+  return async (dispatch, getState) => {
+    console.log("fetchAllUser", getState());
+    try {
+      const response = await fetch(URL_ALL_USER + page, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      const data = await response.json();
+      dispatch(setAllUser(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(handleError(error.message));
+    }
+  };
+};
+
+// POST SAVE USER
+export const fetchSaveUser = (payload, page = 0) => {
+  return async (dispatch, getState) => {
+    console.log("fetchSaveUser", getState());
+    try {
+      const response = await fetch(`${urlBase}/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      dispatch(fetchAllUser(page));
+    } catch (error) {
+      console.log(error);
+      dispatch(handleError(error.message));
+    }
+  };
+};
+
+// PATCH USER ROLE
+export const fetchPatchUserRole = (payload, userId, page = 0) => {
+  return async (dispatch, getState) => {
+    console.log("fetchPatchUserRole", getState());
+    try {
+      const response = await fetch(`${urlBase}/users/${userId}/role`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      dispatch(fetchAllUser(page));
+    } catch (error) {
+      console.log(error);
+      dispatch(handleError(error.message));
+    }
+  };
+};
+
+// DELETE USER
+export const fetchDeleteUser = (userId, page = 0) => {
+  return async (dispatch, getState) => {
+    console.log("fetchDeleteUser", getState());
+    try {
+      const response = await fetch(`${urlBase}/users/${userId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      dispatch(fetchAllUser(page));
     } catch (error) {
       console.log(error);
       dispatch(handleError(error.message));

@@ -38,6 +38,7 @@ const OrderDetail = () => {
   ];
 
   const handleSaveChanges = () => {
+    handleCloseModal();
     console.log(stateValue);
     const payload = { state: stateValue };
     dispatch(
@@ -55,6 +56,7 @@ const OrderDetail = () => {
     if (orderId) {
       dispatch(getOrder(orderId));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   return (
@@ -186,13 +188,7 @@ const OrderDetail = () => {
           <Button variant="secondary" onClick={handleCloseModal}>
             Annulla
           </Button>
-
-          <Button
-            variant="primary"
-            onClick={() => {
-              handleCloseModal(), handleSaveChanges();
-            }}
-          >
+          <Button variant="primary" onClick={handleSaveChanges}>
             Modifica
           </Button>
         </Modal.Footer>

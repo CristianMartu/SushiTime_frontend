@@ -23,7 +23,7 @@ const Exit = () => {
       setPasswordError("");
       dispatch(emptySaveProduct());
       localStorage.setItem("adminPassword", key);
-      navigate("/");
+      navigate("/orders");
     }
     setPassword("");
   };

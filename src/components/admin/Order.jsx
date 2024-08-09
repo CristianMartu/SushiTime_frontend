@@ -154,14 +154,17 @@ const Order = () => {
 
   useEffect(() => {
     dispatch(fetchAllTableState(currentPageTable));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPageTable]);
 
   useEffect(() => {
     dispatch(fetchAllOrderState(currentPageOrderState));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPageOrderState]);
 
   useEffect(() => {
     dispatch(fetchAllOrder(currentPageOrder));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPageOrder]);
 
   return (
@@ -248,6 +251,7 @@ const Order = () => {
                       onClick={() => {
                         setSelectedOrder(order);
                         dispatch(setId(order.id));
+                        localStorage.setItem("orderId", order.id);
                         setShowModal(true);
                       }}
                     >
@@ -401,12 +405,13 @@ const Order = () => {
         </Modal.Header>
         <Modal.Body className="d-md-flex justify-content-center column-gap-3 mt-2">
           <div className="align-self-center">Seleziona nuovo stato: </div>
-          {getState.map((state, idx) => (
-            <ButtonGroup key={idx}>
+          <ButtonGroup>
+            {getState.map((state, idx) => (
               <ToggleButton
+                key={idx}
                 id={`state-${idx}`}
                 type="radio"
-                variant="outline-info"
+                variant="outline-primary"
                 value={state.value}
                 checked={stateValue === state.value}
                 onChange={(e) => {
@@ -415,11 +420,10 @@ const Order = () => {
               >
                 {state.name}
               </ToggleButton>
-            </ButtonGroup>
-          ))}
+            ))}
+          </ButtonGroup>
         </Modal.Body>
-        <Modal.Body className="d-md-flex justify-content-between">
-          <Button variant="outline-danger">Elimina</Button>
+        <Modal.Body className="d-md-flex justify-content-end">
           {stateValue && (
             <Button
               variant="outline-warning"
@@ -434,7 +438,7 @@ const Order = () => {
         {selectedOrder && selectedOrder.orderDetails.length > 0 && (
           <Modal.Footer>
             <h6 className="m-0 me-2 align-self-center">
-              Modifica dettagli ordine
+              Visualizza dettagli ordine
             </h6>
             <Button onClick={handleToOrderDetail}>
               <CiStar />
