@@ -671,6 +671,7 @@ export const fetchCurrentUser = () => {
     } catch (error) {
       console.log(error);
       dispatch(handleError(error.message));
+      throw error;
     }
   };
 };
