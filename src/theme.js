@@ -1,26 +1,60 @@
 import { createTheme } from "@mui/material";
 
+// const darkBlue = "#03045eff";
+// const blue = "#023e8aff";
+// const mediumblue = "#0077b6ff";
+// const lightBlue = "#0096c7ff";
+// const darkSky = "#00b4d8ff";
+// const sky = "#48cae4ff";
+// const mediumSyy = "#90e0efff";
+// const lightSky = "#ade8f4ff";
+
+const dark = "#001219ff";
+const lightDark = "#222222";
+const primary = "#171b4d";
+const secondary = "#11c4c1";
+const vanilla = "#e9d8a6ff";
+const orange = "#ee9b00ff";
+const mediumOrange = "#ca6702ff";
+const darkOrange = "#bb3e03ff";
+const red = "#d32f2f";
+const darkRed = "#9b2226ff";
+const contrast = "#caf0f8ff";
+
 export default createTheme({
   palette: {
+    common: {
+      dark: dark,
+      lightDark: lightDark,
+      primary: primary,
+      secondary: secondary,
+      vanilla: vanilla,
+      orange: orange,
+      mediumOrange: mediumOrange,
+      darkOrange: darkOrange,
+      red: red,
+      darkRed: darkRed,
+      contrast: contrast,
+    },
     primary: {
-      main: "#0077b6", // Honolulu Blue
+      main: primary,
+      light: "#1565c0",
+      //   main: darkBlue,
     },
     secondary: {
-      main: "#00b4d8", // Pacific Cyan
+      main: secondary,
+    },
+    error: {
+      main: red,
+      dark: darkRed,
     },
     background: {
-      default: "#FFFFFF", // Background color
-      paper: "#FFFFFF",
+      paper: contrast,
+      default: "#ffffff",
     },
     text: {
-      primary: "#222222", // Font color
-      secondary: "#90e0ef", // Non-Photo Blue
-    },
-    action: {
-      active: "#03045e", // Federal Blue
-    },
-    info: {
-      main: "#caf0f8", // Light Cyan
+      dark: dark,
+      light: contrast,
     },
   },
   typography: {

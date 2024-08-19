@@ -639,6 +639,7 @@ export const fetchLogin = (payload) => {
       }
       const data = await response.json();
       localStorage.setItem("authToken", data.accessToken);
+      localStorage.setItem("adminPassword", 1234);
     } catch (error) {
       console.log(error);
       throw error;

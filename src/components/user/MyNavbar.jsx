@@ -1,19 +1,33 @@
 import { useEffect, useState } from "react";
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { CiStar } from "react-icons/ci";
 import { MdMenuBook } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { BsCart } from "react-icons/bs";
+import { RxExit } from "react-icons/rx";
+
+import {
+  Box,
+  Button,
+  Container,
+  IconButton,
+  List,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+
 import {
   fetchAllDetailByOrder,
   getOrder,
   saveOrderDetails,
 } from "../../redux/actions";
-import { Button, ListGroup, Modal } from "react-bootstrap";
-import { BsCart } from "react-icons/bs";
-import { RxExit } from "react-icons/rx";
+
+import {
+  StyledAppBar,
+  StyledModal,
+  ModalBox,
+  StyledListItem,
+} from "./../../style/style";
 
 const MyNavbar = () => {
   const dispatch = useDispatch();
@@ -68,7 +82,6 @@ const MyNavbar = () => {
 
     if (difference < 10) {
       const time = new Date(lastOrderTime.getTime() + 10 * 60000);
-      // console.log(time);
       return `Prossima ordinazione: ${time
         .getHours()
         .toString()
@@ -79,7 +92,6 @@ const MyNavbar = () => {
   };
 
   useEffect(() => {
-    console.log(orderId);
     if (orderId) {
       dispatch(getOrder(orderId));
       dispatch(fetchAllDetailByOrder(orderId));
@@ -89,85 +101,133 @@ const MyNavbar = () => {
       dispatch(fetchAllDetailByOrder(id));
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [saveProduct]);
+    localStorage.setItem("adminPassword", null);
+  }, [saveProduct, dispatch, orderId]);
 
   return (
     <>
-      <Navbar expand="lg" className="bg-body-tertiary sticky-top">
-        <Container>
-          <Navbar.Brand as={NavLink} to={"/menu"}>
-            Tavolo {order.table ? order.table.number : 0}
-          </Navbar.Brand>
-          <Navbar.Toggle />
-          <Navbar.Collapse>
-            <Nav>
-              <NavLink to={"/menu"} className="nav-link">
-                <MdMenuBook />
+      <StyledAppBar position="sticky">
+        <Container maxWidth="xl">
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              height: "4rem",
+            }}
+          >
+            <Typography
+              variant="h6"
+              component={Link}
+              to="/menu"
+              sx={{
+                textDecoration: "none",
+                color: (theme) => theme.palette.background.default,
+              }}
+            >
+              Tavolo {order.table ? order.table.number : 0}
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Button
+                component={Link}
+                to="/menu"
+                color="inherit"
+                startIcon={<MdMenuBook />}
+                sx={{ color: (theme) => theme.palette.text.light }}
+              >
                 Menù
-              </NavLink>
-              <NavLink to={"/history"} className="nav-link">
-                <CiStar />
+              </Button>
+              <Button
+                component={Link}
+                to="/history"
+                color="inherit"
+                startIcon={<CiStar />}
+                sx={{ color: (theme) => theme.palette.text.light }}
+              >
                 Storico
-              </NavLink>
-              <div>
-                <Button
-                  variant="primary"
-                  className="rounded-circle"
-                  onClick={() => setShow(true)}
-                >
-                  <BsCart />
-                </Button>
-              </div>
-              <NavLink to={"/exit"} className="nav-link">
-                <RxExit />
+              </Button>
+              <IconButton
+                color="inherit"
+                onClick={() => setShow(true)}
+                sx={{ color: (theme) => theme.palette.background.default }}
+              >
+                <BsCart />
+              </IconButton>
+              <Button
+                component={Link}
+                to="/exit"
+                color="inherit"
+                startIcon={<RxExit />}
+                sx={{ color: (theme) => theme.palette.text.light }}
+              >
                 Esci
-              </NavLink>
-            </Nav>
-          </Navbar.Collapse>
+              </Button>
+            </Box>
+          </Box>
         </Container>
-      </Navbar>
+      </StyledAppBar>
 
-      <Modal
-        show={show}
-        onHide={() => setShow(false)}
-        dialogClassName="custom-modal"
-        aria-labelledby=""
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Ordine</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <ListGroup as="ul" className="mb-3">
+      <StyledModal open={show} onClose={() => setShow(false)}>
+        <ModalBox>
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{ color: (theme) => theme.palette.primary.main }}
+          >
+            Ordine
+          </Typography>
+          <List>
             {saveProduct.length > 0 ? (
               Object.values(viewProduct).map((key, index) => (
-                <ListGroup.Item
-                  as="li"
-                  key={index}
-                  className="d-flex justify-content-between w-75 mx-auto"
-                >
-                  <div>
-                    {key[0].number} {key[0].name}:
-                  </div>
-                  <div>{key.length}</div>
-                </ListGroup.Item>
+                <StyledListItem key={index} divider>
+                  <ListItemText
+                    primary={`${key[0].number} ${key[0].name}:`}
+                    sx={{ color: (theme) => theme.palette.primary.main }}
+                  />
+                  <Typography
+                    sx={{ color: (theme) => theme.palette.secondary.main }}
+                  >
+                    {key.length}
+                  </Typography>
+                </StyledListItem>
               ))
             ) : (
-              <div>Nessun prodotto salvato</div>
+              <Typography sx={{ color: (theme) => theme.palette.primary.main }}>
+                Nessun prodotto salvato
+              </Typography>
             )}
-          </ListGroup>
-          <div className="d-flex justify-content-between align-items-center">
-            <Button variant="danger" onClick={() => handleFetch()}>
+          </List>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => handleFetch()}
+              sx={{
+                backgroundColor: (theme) => theme.palette.secondary.main,
+                "&:hover": {
+                  backgroundColor: (theme) => theme.palette.info.main,
+                },
+              }}
+            >
               Invio
             </Button>
-            <div>
+            <Typography sx={{ color: (theme) => theme.palette.primary.main }}>
               {saveProduct.length}/
               {order.table ? order.table.currentPeople * 6 : 0}
-            </div>
-            <div>{orderDetails.content && timeToNewOrder()}</div>
-          </div>
-        </Modal.Body>
-      </Modal>
+            </Typography>
+            <Typography sx={{ color: (theme) => theme.palette.primary.main }}>
+              {orderDetails.content && timeToNewOrder()}
+            </Typography>
+          </Box>
+        </ModalBox>
+      </StyledModal>
     </>
   );
 };

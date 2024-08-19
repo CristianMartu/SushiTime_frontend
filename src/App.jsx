@@ -66,7 +66,7 @@ const Layout = () => {
 
 function App() {
   useEffect(() => {
-    localStorage.setItem("adminPassword", "1234");
+    // localStorage.setItem("adminPassword", "1234");
   }, []);
 
   return (

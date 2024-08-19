@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Container, ListGroup, Row } from "react-bootstrap";
+import { Container, Button, Typography, ListItem } from "@mui/material";
 import Products from "./Products";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,6 +7,7 @@ import {
   setActiveCategory,
   setCategoryName,
 } from "../../redux/actions";
+import { StyledList, StyledListItemMenu } from "../../style/style";
 
 const Menu = () => {
   localStorage.setItem("adminPassword", "");
@@ -16,6 +17,7 @@ const Menu = () => {
   const activeCategory = useSelector((state) => state.category.id);
 
   const [menuType, setMenuType] = useState("");
+
   useEffect(() => {
     dispatch(getCategories());
 
@@ -27,49 +29,53 @@ const Menu = () => {
     } else {
       setMenuType("Menu Cena");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   return (
-    <div className="d-flex">
-      <ListGroup as="ul" style={{ width: "20rem" }}>
-        <ListGroup.Item className="text-center">
-          <Button>{menuType}</Button>
-        </ListGroup.Item>
+    <div style={{ display: "flex", backgroundColor: "#071535" }}>
+      <StyledList>
+        <ListItem
+          sx={{
+            justifyContent: "center",
+          }}
+        >
+          <Button variant="contained" color="secondary" disableRipple>
+            {menuType}
+          </Button>
+        </ListItem>
         {category.content ? (
           category.content.map((element) => (
-            <ListGroup.Item
-              as="li"
+            <StyledListItemMenu
               key={element.id}
-              variant="info"
-              active={
+              isActive={
                 activeCategory === null
-                  ? category.content[0].id == element.id
-                  : activeCategory == element.id
+                  ? category.content[0].id === element.id
+                  : activeCategory === element.id
               }
               onClick={() => {
                 dispatch(setCategoryName(element.name));
                 dispatch(setActiveCategory(element.id));
               }}
             >
-              {element.name}
-            </ListGroup.Item>
+              <Typography>{element.name}</Typography>
+            </StyledListItemMenu>
           ))
         ) : (
-          <div>Nessun risultato</div>
+          <Typography sx={{ textAlign: "center", padding: "1rem" }}>
+            Nessun risultato
+          </Typography>
         )}
-      </ListGroup>
+      </StyledList>
 
-      <Container>
-        <Row className="row-gap-3 my-4" style={{ height: "400px" }}>
-          {category.content ? (
-            <Products categoryName={name || category.content[0]?.name} />
-          ) : (
-            <div>Nessun risultato</div>
-          )}
-        </Row>
+      <Container sx={{ marginBlockStart: 3 }}>
+        {category.content ? (
+          <Products categoryName={name || category.content[0]?.name} />
+        ) : (
+          <Typography>Nessun risultato</Typography>
+        )}
       </Container>
     </div>
   );
 };
+
 export default Menu;

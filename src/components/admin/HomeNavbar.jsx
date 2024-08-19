@@ -1,28 +1,21 @@
 import { useEffect } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
-import { fetchCurrentUser } from "../../redux/actions";
 
 const HomeNavbar = () => {
   const key = import.meta.env.VITE_PASSWORD;
   const password = localStorage.getItem("adminPassword");
-  const accessToken = localStorage.getItem("authToken");
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const currentUser = useSelector((state) => state.user.currentUser);
 
   useEffect(() => {
-    if (!accessToken) {
-      navigate("/login");
-    }
     if (key !== password) {
       navigate("/menu");
     }
-    dispatch(fetchCurrentUser());
-  }, []);
+  }, [key, navigate, password]);
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary sticky-top">

@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
-import { Card, CardFooter, CardText, Col } from "react-bootstrap";
-import { FaMinus } from "react-icons/fa6";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  CardActions,
+  Typography,
+  Grid,
+  IconButton,
+} from "@mui/material";
+import { FaMinus } from "react-icons/fa";
 import { TiPlus } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct, removeProduct } from "../../redux/actions";
@@ -18,7 +26,6 @@ const Products = ({ categoryName }) => {
   const [menu, setMenu] = useState();
 
   const menuFetch = async () => {
-    // console.log(categoryName);
     try {
       const response = await fetch(URL, {
         method: "POST",
@@ -31,9 +38,8 @@ const Products = ({ categoryName }) => {
       if (response.ok) {
         const data = await response.json();
         setMenu(data);
-        // console.log(data);
       } else {
-        alert("Errore nella fetch ");
+        alert("Errore nella fetch");
       }
     } catch (error) {
       console.log(error);
@@ -42,7 +48,6 @@ const Products = ({ categoryName }) => {
 
   useEffect(() => {
     menuFetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryName]);
 
   const saveAddProduct = useSelector((state) => state.product.content);
@@ -68,62 +73,93 @@ const Products = ({ categoryName }) => {
   };
 
   return menu ? (
-    menu.content.map((product) => {
-      const selectedProduct = saveAddProduct.filter((p) => p.id === product.id);
-      const quantity = selectedProduct ? selectedProduct.length : 0;
-      const imageUrl = product.image.startsWith("http")
-        ? product.image
-        : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg";
+    <Grid container spacing={3}>
+      {menu.content.map((product) => {
+        const selectedProduct = saveAddProduct.filter(
+          (p) => p.id === product.id
+        );
+        const quantity = selectedProduct ? selectedProduct.length : 0;
+        const imageUrl = product.image.startsWith("http")
+          ? product.image
+          : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg";
 
-      return (
-        <Col key={product.id} className="d-flex align-items-stretch" xs="auto">
-          <Card
-            style={{ width: "16rem", maxHeight: "600px" }}
-            border={isSaved(product.id) ? "danger" : "info"}
-          >
-            <Card.Body className="d-flex flex-column">
-              <Card.Title>
-                {product.number} - {product.name}
-              </Card.Title>
-              <CardText>{product.description}</CardText>
-              <CardText className="text-info mt-auto">
-                {getProductPrice(product.category.name, product.price)}
-              </CardText>
-            </Card.Body>
-            <Card.Img
-              variant="top"
-              src={imageUrl}
-              className="fixed-size-image"
-            />
-            <CardFooter
-              className={
-                isSaved(product.id)
-                  ? "bg-danger d-flex justify-content-between text-white fs-3"
-                  : "bg-info d-flex justify-content-between text-white fs-3"
-              }
+        return (
+          <Grid item key={product.id} xs={12} md={6} lg={4} xl={3}>
+            <Card
+              sx={{
+                width: "240px",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                borderColor: isSaved(product.id)
+                  ? "common.darkRed"
+                  : "secondary.main",
+                backgroundColor: "common.white",
+                borderWidth: 2,
+                borderStyle: "solid",
+                borderRadius: "16px",
+                overflow: "hidden",
+                boxShadow: 3,
+                marginInlineStart: "20px",
+              }}
             >
-              <FaMinus
-                className="my-auto minus"
-                onClick={() => {
-                  if (isSaved(product.id)) {
-                    dispatch(removeProduct(product.id));
-                  }
-                }}
+              <CardContent sx={{ flexGrow: 1 }}>
+                <Typography variant="h5" gutterBottom>
+                  {product.number} - {product.name}
+                </Typography>
+                <Typography variant="body1">{product.description}</Typography>
+                <Typography variant="h6" color="primary" sx={{ mt: "auto" }}>
+                  {getProductPrice(product.category.name, product.price)}
+                </Typography>
+              </CardContent>
+              <CardMedia
+                component="img"
+                image={imageUrl}
+                alt={product.name}
+                sx={{ height: 140, objectFit: "contain" }}
               />
-              <div>{quantity}</div>
-              <TiPlus
-                className="my-auto plus"
-                onClick={() => {
-                  dispatch(addProduct(product));
+              <CardActions
+                sx={{
+                  justifyContent: "space-between",
+                  padding: "8px 16px",
+                  backgroundColor: isSaved(product.id)
+                    ? "common.darkRed"
+                    : "secondary.main",
                 }}
-              />
-            </CardFooter>
-          </Card>
-        </Col>
-      );
-    })
+              >
+                <IconButton
+                  color="white"
+                  onClick={() => {
+                    if (isSaved(product.id)) {
+                      dispatch(removeProduct(product.id));
+                    }
+                  }}
+                >
+                  <FaMinus />
+                </IconButton>
+                <Typography
+                  variant="h6"
+                  color={isSaved(product.id) ? "common.vanilla" : "white"}
+                >
+                  {quantity}
+                </Typography>
+                <IconButton
+                  color="white"
+                  onClick={() => {
+                    dispatch(addProduct(product));
+                  }}
+                >
+                  <TiPlus />
+                </IconButton>
+              </CardActions>
+            </Card>
+          </Grid>
+        );
+      })}
+    </Grid>
   ) : (
-    <div>Nessun risultato</div>
+    <Typography>Nessun risultato</Typography>
   );
 };
+
 export default Products;
