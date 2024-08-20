@@ -7,6 +7,7 @@ import {
   Typography,
   Grid,
   IconButton,
+  Box,
 } from "@mui/material";
 import { FaMinus } from "react-icons/fa";
 import { TiPlus } from "react-icons/ti";
@@ -72,93 +73,118 @@ const Products = ({ categoryName }) => {
     }).format(price);
   };
 
-  return menu ? (
-    <Grid container spacing={3}>
-      {menu.content.map((product) => {
-        const selectedProduct = saveAddProduct.filter(
-          (p) => p.id === product.id
-        );
-        const quantity = selectedProduct ? selectedProduct.length : 0;
-        const imageUrl = product.image.startsWith("http")
-          ? product.image
-          : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg";
+  return (
+    <Box
+      sx={{
+        height: "calc(100vh - 4rem)",
+        overflowY: "auto",
+        paddingBlock: "25px",
+      }}
+    >
+      {menu ? (
+        <Grid
+          container
+          rowSpacing={4}
+          justifyContent={"start"}
+          sx={{ paddingInlineStart: "3rem" }}
+        >
+          {menu.content.map((product) => {
+            const selectedProduct = saveAddProduct.filter(
+              (p) => p.id === product.id
+            );
+            const quantity = selectedProduct ? selectedProduct.length : 0;
+            const imageUrl = product.image.startsWith("http")
+              ? product.image
+              : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg";
 
-        return (
-          <Grid item key={product.id} xs={12} md={6} lg={4} xl={3}>
-            <Card
-              sx={{
-                width: "240px",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                borderColor: isSaved(product.id)
-                  ? "common.darkRed"
-                  : "secondary.main",
-                backgroundColor: "common.white",
-                borderWidth: 2,
-                borderStyle: "solid",
-                borderRadius: "16px",
-                overflow: "hidden",
-                boxShadow: 3,
-                marginInlineStart: "20px",
-              }}
-            >
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="h5" gutterBottom>
-                  {product.number} - {product.name}
-                </Typography>
-                <Typography variant="body1">{product.description}</Typography>
-                <Typography variant="h6" color="primary" sx={{ mt: "auto" }}>
-                  {getProductPrice(product.category.name, product.price)}
-                </Typography>
-              </CardContent>
-              <CardMedia
-                component="img"
-                image={imageUrl}
-                alt={product.name}
-                sx={{ height: 140, objectFit: "contain" }}
-              />
-              <CardActions
-                sx={{
-                  justifyContent: "space-between",
-                  padding: "8px 16px",
-                  backgroundColor: isSaved(product.id)
-                    ? "common.darkRed"
-                    : "secondary.main",
-                }}
-              >
-                <IconButton
-                  color="white"
-                  onClick={() => {
-                    if (isSaved(product.id)) {
-                      dispatch(removeProduct(product.id));
-                    }
+            return (
+              <Grid item key={product.id} xs="auto">
+                <Card
+                  sx={{
+                    width: "240px",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    borderColor: isSaved(product.id)
+                      ? "common.darkRed"
+                      : "secondary.main",
+                    backgroundColor: "common.white",
+                    borderWidth: 2,
+                    borderStyle: "solid",
+                    borderRadius: "16px",
+                    overflow: "hidden",
+                    boxShadow: 3,
+                    marginInlineStart: "20px",
                   }}
                 >
-                  <FaMinus />
-                </IconButton>
-                <Typography
-                  variant="h6"
-                  color={isSaved(product.id) ? "common.vanilla" : "white"}
-                >
-                  {quantity}
-                </Typography>
-                <IconButton
-                  color="white"
-                  onClick={() => {
-                    dispatch(addProduct(product));
-                  }}
-                >
-                  <TiPlus />
-                </IconButton>
-              </CardActions>
-            </Card>
-          </Grid>
-        );
-      })}
-    </Grid>
-  ) : (
-    <Typography>Nessun risultato</Typography>
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      {product.number} - {product.name}
+                    </Typography>
+                    <Typography variant="body1">
+                      {product.description}
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      color="secondary"
+                      sx={{ mt: "auto" }}
+                    >
+                      {getProductPrice(product.category.name, product.price)}
+                    </Typography>
+                  </CardContent>
+                  <CardMedia
+                    component="img"
+                    image={imageUrl}
+                    alt={product.name}
+                    sx={{ height: 140, objectFit: "contain" }}
+                  />
+                  <CardActions
+                    sx={{
+                      justifyContent: "space-between",
+                      padding: "8px 16px",
+                      backgroundColor: isSaved(product.id)
+                        ? "common.darkRed"
+                        : "secondary.main",
+                    }}
+                  >
+                    <IconButton
+                      color="white"
+                      onClick={() => {
+                        if (isSaved(product.id)) {
+                          dispatch(removeProduct(product.id));
+                        }
+                      }}
+                    >
+                      <FaMinus />
+                    </IconButton>
+                    <Typography
+                      variant="h6"
+                      color={isSaved(product.id) ? "common.vanilla" : "white"}
+                    >
+                      {quantity}
+                    </Typography>
+                    <IconButton
+                      color="white"
+                      onClick={() => {
+                        dispatch(addProduct(product));
+                      }}
+                    >
+                      <TiPlus />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      ) : (
+        <Typography>Nessun risultato</Typography>
+      )}
+    </Box>
   );
 };
 

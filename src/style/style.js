@@ -34,11 +34,13 @@ export const StyledModal = styled(Modal)({
 
 // MENU
 export const StyledList = styled(List)(({ theme }) => ({
-  width: "20rem",
+  minWidth: "20rem",
   //   backgroundColor: theme.palette.background.paper,
   backgroundColor: theme.palette.primary.main,
   borderRadius: "4px",
   boxShadow: theme.shadows[1],
+  height: "calc(100vh - 4rem)",
+  overflowY: "auto",
 }));
 
 // Styled ListItem

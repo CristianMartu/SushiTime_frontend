@@ -1,7 +1,14 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllDetailByOrder } from "../../redux/actions";
-import { Col, Container, ListGroup, Row } from "react-bootstrap";
+import {
+  Container,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+  Grid,
+} from "@mui/material";
 import { IoPerson } from "react-icons/io5";
 
 const History = () => {
@@ -10,9 +17,10 @@ const History = () => {
   const orders = useSelector((state) => state.orderDetail.all);
 
   useEffect(() => {
-    dispatch(fetchAllDetailByOrder(order.id));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (order.id) {
+      dispatch(fetchAllDetailByOrder(order.id));
+    }
+  }, [dispatch, order.id]);
 
   const viewProduct = () => {
     return orders.content.reduce((acc, order) => {
@@ -53,42 +61,89 @@ const History = () => {
 
   return (
     <Container>
-      <ListGroup className="mt-2">
-        <ListGroup.Item active variant="secondary">
-          <Row>
-            <Col xs={2}>
-              {" "}
-              Prezzo Totale: {orders.content && formatPrice(sumPrices())}
-            </Col>
-            <Col>
-              <IoPerson /> {order.table ? order.table.currentPeople : 0}
-            </Col>
-          </Row>
-        </ListGroup.Item>
-      </ListGroup>
+      <List sx={{ mt: 2 }}>
+        <ListItem
+          sx={{
+            backgroundColor: "#1565c0",
+            // backgroundColor: "secondary.main",
+            color: "white",
+            overflow: "hidden",
+            borderRadius: "12px",
+            paddingBlock: "15px",
+          }}
+        >
+          <Grid container>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1">
+                Prezzo Totale: {orders.content && formatPrice(sumPrices())}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6} sx={{ textAlign: "right" }}>
+              <Typography variant="body1">
+                <IoPerson /> {order.table ? order.table.currentPeople : 0}
+              </Typography>
+            </Grid>
+          </Grid>
+        </ListItem>
+      </List>
       {orders.content ? (
         Object.values(viewProduct()).map((element, index) => (
-          <ListGroup key={index} className="my-3">
-            <ListGroup.Item active>
-              {dateFormat(element[0].orderTime)}
-            </ListGroup.Item>
+          <List
+            key={index}
+            sx={{
+              my: 3,
+              borderRadius: "12px",
+              border: "2px solid",
+              borderColor: (theme) => theme.palette.secondary.main,
+              // backgroundColor: "background.paper",
+              padding: 0,
+              overflow: "hidden",
+            }}
+          >
+            <ListItem
+              sx={{ backgroundColor: "secondary.main", color: "white" }}
+            >
+              <ListItemText
+                primary={dateFormat(element[0].orderTime)}
+                sx={{ textAlign: "center" }}
+              />
+            </ListItem>
             {element.map((order) => (
-              <ListGroup.Item key={order.id}>
-                <Row className="my-2 p-2  text-center">
-                  <Col>{order.product.number}</Col>
-                  <Col xs={12} sm={5} md={7} xl={9} className="text-sm-start">
-                    {order.product.name}
-                  </Col>
-                  <Col>{order.price}€</Col>
-                  <Col>{order.quantity}</Col>
-                  <Col>{order.state}</Col>
-                </Row>
-              </ListGroup.Item>
+              <ListItem
+                key={order.id}
+                // divider
+                sx={{
+                  backgroundColor: "background.paper",
+                  borderBottom: `1px solid`,
+                  borderBottomColor: (theme) => theme.palette.secondary.main,
+                  ":last-of-type": {
+                    borderBottom: `0px`,
+                  },
+                  color: (theme) => theme.palette.text.dark,
+                }}
+              >
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid item xs>
+                    <Typography>
+                      {order.product.number} {order.product.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography>{formatPrice(order.price)}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography>{order.quantity}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography>{order.state}</Typography>
+                  </Grid>
+                </Grid>
+              </ListItem>
             ))}
-          </ListGroup>
+          </List>
         ))
       ) : (
-        <div>Carrello vuoto</div>
+        <Typography>Carrello vuoto</Typography>
       )}
     </Container>
   );

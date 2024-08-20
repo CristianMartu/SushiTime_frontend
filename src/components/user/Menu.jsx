@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Button, Typography, ListItem } from "@mui/material";
+import { Button, Typography, ListItem } from "@mui/material";
 import Products from "./Products";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -39,7 +39,12 @@ const Menu = () => {
             justifyContent: "center",
           }}
         >
-          <Button variant="contained" color="secondary" disableRipple>
+          <Button
+            variant="contained"
+            color="secondary"
+            disableRipple
+            sx={{ fontWeight: "bold" }}
+          >
             {menuType}
           </Button>
         </ListItem>
@@ -67,13 +72,13 @@ const Menu = () => {
         )}
       </StyledList>
 
-      <Container sx={{ marginBlockStart: 3 }}>
+      <>
         {category.content ? (
           <Products categoryName={name || category.content[0]?.name} />
         ) : (
           <Typography>Nessun risultato</Typography>
         )}
-      </Container>
+      </>
     </div>
   );
 };

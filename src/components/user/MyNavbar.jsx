@@ -133,7 +133,13 @@ const MyNavbar = () => {
                 to="/menu"
                 color="inherit"
                 startIcon={<MdMenuBook />}
-                sx={{ color: (theme) => theme.palette.text.light }}
+                sx={{
+                  color: (theme) => theme.palette.text.light,
+                  marginRight: 4,
+                  "&:hover": {
+                    color: (theme) => theme.palette.common.white,
+                  },
+                }}
               >
                 Menù
               </Button>
@@ -142,14 +148,25 @@ const MyNavbar = () => {
                 to="/history"
                 color="inherit"
                 startIcon={<CiStar />}
-                sx={{ color: (theme) => theme.palette.text.light }}
+                sx={{
+                  color: (theme) => theme.palette.text.light,
+                  marginRight: 4,
+                  "&:hover": {
+                    color: (theme) => theme.palette.common.white,
+                  },
+                }}
               >
                 Storico
               </Button>
               <IconButton
                 color="inherit"
                 onClick={() => setShow(true)}
-                sx={{ color: (theme) => theme.palette.background.default }}
+                sx={{
+                  backgroundColor: (theme) => theme.palette.secondary.main,
+                  marginRight: 4,
+                  padding: "10px",
+                  border: "1px solid white",
+                }}
               >
                 <BsCart />
               </IconButton>
@@ -158,7 +175,12 @@ const MyNavbar = () => {
                 to="/exit"
                 color="inherit"
                 startIcon={<RxExit />}
-                sx={{ color: (theme) => theme.palette.text.light }}
+                sx={{
+                  color: (theme) => theme.palette.text.light,
+                  "&:hover": {
+                    color: (theme) => theme.palette.common.white,
+                  },
+                }}
               >
                 Esci
               </Button>
