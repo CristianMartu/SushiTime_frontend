@@ -13,6 +13,7 @@ import {
   IconButton,
   List,
   Modal,
+  Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -23,7 +24,13 @@ import {
   saveOrderDetails,
 } from "../../redux/actions";
 
-import { StyledAppBar, ModalBox, StyledListItem } from "./../../style/style";
+import {
+  StyledAppBar,
+  ModalBox,
+  StyledListItem,
+  NavbarButton,
+} from "./../../style/style";
+import logo from "./../../assets/logo.png";
 
 const MyNavbar = () => {
   const theme = useTheme();
@@ -105,7 +112,7 @@ const MyNavbar = () => {
     <>
       <StyledAppBar position="sticky">
         <Container maxWidth="xl">
-          <Box
+          <Toolbar
             sx={{
               display: "flex",
               justifyContent: "space-between",
@@ -119,57 +126,42 @@ const MyNavbar = () => {
               to="/menu"
               sx={{
                 textDecoration: "none",
-                color: theme.palette.background.default,
+                color: theme.palette.secondary.main,
               }}
             >
+              <img
+                src={logo}
+                alt="logo"
+                style={{ maxHeight: "3.5rem", marginInlineEnd: "1rem" }}
+              />
               Tavolo {order.table ? order.table.number : 0}
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Button
+              <NavbarButton
                 component={Link}
                 to="/menu"
                 color="inherit"
                 startIcon={<MdMenuBook />}
-                sx={{
-                  color: theme.palette.text.light,
-                  marginRight: 4,
-                  "&:hover": {
-                    color: theme.palette.common.white,
-                  },
-                }}
               >
                 <Typography variant="body1">MENÙ</Typography>
-              </Button>
-              <Button
+              </NavbarButton>
+              <NavbarButton
                 component={Link}
                 to="/history"
                 color="inherit"
                 startIcon={<CiStar />}
-                sx={{
-                  color: theme.palette.text.light,
-                  marginRight: 4,
-                  "&:hover": {
-                    color: theme.palette.common.white,
-                  },
-                }}
               >
                 <Typography variant="body1">STORICO</Typography>
-              </Button>
+              </NavbarButton>
               <IconButton
                 color="inherit"
                 onClick={() => setShow(true)}
-                // sx={{
-                //   backgroundColor: theme.palette.secondary.main,
-                //   marginRight: 4,
-                //   padding: "10px",
-                //   border: "1px solid white",
-                // }}
                 sx={{
                   backgroundColor: theme.palette.secondary.main,
                   marginRight: 4,
                   padding: "15px",
                   border: `6px solid ${theme.palette.primary.main}`,
-                  boxShadow: "0px 7px 5px -4px rgba(0, 0, 0, 1)",
+                  boxShadow: "0px 7px 5px -4px rgba(0, 0, 0, 0.7)",
                   "&:hover": {
                     backgroundColor: theme.palette.secondary.dark,
                   },
@@ -198,7 +190,7 @@ const MyNavbar = () => {
                 <Typography variant="body1">ESCI</Typography>
               </Button>
             </Box>
-          </Box>
+          </Toolbar>
         </Container>
       </StyledAppBar>
 

@@ -3,10 +3,21 @@ import {
   Button,
   ButtonGroup,
   Container,
-  Modal,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
   ToggleButton,
-} from "react-bootstrap";
+  Typography,
+  useTheme,
+  Box,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAllOrderDetail,
@@ -14,14 +25,23 @@ import {
   getOrder,
 } from "../../redux/actions";
 import CustomPagination from "../CustomPagination";
+import { StyledTableCell } from "../../style/style";
 
 const OrderDetail = () => {
   const dispatch = useDispatch();
+  const theme = useTheme();
   const orderDetails = useSelector((state) => state.orderDetail.orders);
   const orderId = useSelector((state) => state.order.id);
   const order = useSelector((state) => state.orderDetail.byOrder);
   const [showModal, setShowModal] = useState(false);
   const [detailOrder, setDetailOrder] = useState();
+  const [stateValue, setStateValue] = useState("SERVED");
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const getState = [
+    { name: "SERVED", value: "SERVED" },
+    { name: "CANCELED", value: "CANCELED" },
+  ];
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -31,22 +51,14 @@ const OrderDetail = () => {
     }, 150);
   };
 
-  const [stateValue, setStateValue] = useState("SERVED");
-  const getState = [
-    { name: "SERVED", value: "SERVED" },
-    { name: "CANCELED", value: "CANCELED" },
-  ];
-
   const handleSaveChanges = () => {
     handleCloseModal();
-    console.log(stateValue);
     const payload = { state: stateValue };
     dispatch(
       fetchUpdateOrderDetail(payload, detailOrder, currentPage, orderId)
     );
   };
 
-  const [currentPage, setCurrentPage] = useState(0);
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -56,52 +68,82 @@ const OrderDetail = () => {
     if (orderId) {
       dispatch(getOrder(orderId));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage]);
+  }, [currentPage, orderId, dispatch]);
 
   return (
-    <>
-      <Container>
-        <h3>
+    <Box sx={{ height: "calc(100vh - 4rem)", overflow: "auto" }}>
+      <Container
+        maxWidth="lg"
+        sx={{
+          paddingBlock: "1rem",
+        }}
+      >
+        <Typography variant="h3" color={theme.palette.secondary.light}>
           Ordinazioni totali in corso:{" "}
           {orderDetails.page && orderDetails.page.totalElements}
-        </h3>
-        <Table
-          striped
-          bordered
-          hover
-          variant="secondary"
-          className="text-center"
-          responsive="sm"
-        >
-          <thead>
-            <tr>
-              <th>Data ordinazione</th>
-              <th>Quantità</th>
-              <th>Numero prodotto</th>
-              <th>Nome prodotto</th>
-              <th>Stato ordinazione</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orderDetails.content &&
-              orderDetails.content.map((order) => (
-                <tr
-                  key={order.id}
-                  onClick={() => {
-                    setShowModal(true);
-                    setDetailOrder(order.id);
-                  }}
-                >
-                  <td>{order.orderTime}</td>
-                  <td>{order.quantity}</td>
-                  <td>{order.product.number}</td>
-                  <td>{order.product.name}</td>
-                  <td>{order.state}</td>
-                </tr>
-              ))}
-          </tbody>
-        </Table>
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Data ordinazione
+                  </Typography>
+                </StyledTableCell>
+                <StyledTableCell>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Quantità
+                  </Typography>
+                </StyledTableCell>
+                <StyledTableCell>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Numero prodotto
+                  </Typography>
+                </StyledTableCell>
+                <StyledTableCell>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Nome prodotto
+                  </Typography>
+                </StyledTableCell>
+                <StyledTableCell align="center">
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Stato ordinazione
+                  </Typography>
+                </StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orderDetails.content &&
+                orderDetails.content.map((order) => (
+                  <TableRow
+                    key={order.id}
+                    onClick={() => {
+                      setShowModal(true);
+                      setDetailOrder(order.id);
+                    }}
+                    hover
+                  >
+                    <StyledTableCell>
+                      <Typography>{order.orderTime}</Typography>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Typography>{order.quantity}</Typography>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Typography>{order.product.number}</Typography>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Typography>{order.product.name}</Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography>{order.state}</Typography>
+                    </StyledTableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
         {orderDetails.page && orderDetails.page.totalPages > 1 && (
           <CustomPagination
             totalPages={orderDetails.page ? orderDetails.page.totalPages : 0}
@@ -114,86 +156,106 @@ const OrderDetail = () => {
           order.orderDetails &&
           order.orderDetails.length > 0 && (
             <>
-              <h5>Dettagli ordinazioni tavolo {order.table.number}</h5>
-              <Table
-                striped
-                bordered
-                hover
-                variant="secondary"
-                className="text-center"
-                responsive="sm"
-              >
-                <thead>
-                  <tr>
-                    <th>Data ordinazione</th>
-                    <th>Quantità</th>
-                    <th>Numero prodotto</th>
-                    <th>Nome prodotto</th>
-                    <th>Stato ordinazione</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {order.orderDetails.map((detail) => (
-                    <tr
-                      key={detail.id}
-                      onClick={() => {
-                        if (detail.state === "IN_PROGRESS") {
-                          setShowModal(true);
-                          setDetailOrder(detail.id);
-                        }
-                      }}
-                    >
-                      <td>{detail.orderTime}</td>
-                      <td>{detail.quantity}</td>
-                      <td>{detail.product.number}</td>
-                      <td>{detail.product.name}</td>
-                      <td>{detail.state}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
+              <Typography variant="h4" color={theme.palette.secondary.light}>
+                Dettagli ordinazioni tavolo {order.table.number}
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table variant="outlined" size="small">
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell>
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Data ordinazione
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Quantità
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Numero prodotto
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Nome prodotto
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Stato ordinazione
+                        </Typography>
+                      </StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {order.orderDetails.map((detail) => (
+                      <TableRow
+                        key={detail.id}
+                        onClick={() => {
+                          if (detail.state === "IN_PROGRESS") {
+                            setShowModal(true);
+                            setDetailOrder(detail.id);
+                          }
+                        }}
+                        hover
+                      >
+                        <StyledTableCell>
+                          <Typography>{detail.orderTime}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          <Typography>{detail.quantity}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          <Typography>{detail.product.number}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          <Typography>{detail.product.name}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Typography>{detail.state}</Typography>
+                        </StyledTableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </>
           )}
       </Container>
-      <Modal
-        show={showModal}
-        onHide={handleCloseModal}
-        backdrop="static"
-        keyboard={false}
-        centered
+      <Dialog
+        open={showModal}
+        onClose={handleCloseModal}
+        fullWidth
+        maxWidth="sm"
       >
-        <Modal.Header closeButton>
-          <Modal.Title>Modifica stato ordinazione</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <ButtonGroup>
+        <DialogTitle>Modifica stato ordinazione</DialogTitle>
+        <DialogContent>
+          <ButtonGroup color="primary" fullWidth>
             {getState.map((state, idx) => (
               <ToggleButton
                 key={idx}
-                id={`state-${idx}`}
-                type="radio"
-                variant="outline-primary"
                 value={state.value}
-                checked={stateValue === state.value}
-                onChange={(e) => {
-                  setStateValue(e.currentTarget.value);
-                }}
+                selected={stateValue === state.value}
+                onChange={() => setStateValue(state.value)}
               >
                 {state.name}
               </ToggleButton>
             ))}
           </ButtonGroup>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="secondary">
             Annulla
           </Button>
-          <Button variant="primary" onClick={handleSaveChanges}>
+          <Button onClick={handleSaveChanges} color="primary">
             Modifica
           </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };
 

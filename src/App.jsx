@@ -76,7 +76,7 @@ function App() {
           <Route path="/orders" element={<Order />} />
           <Route path="/tables" element={<MyTable />} />
           <Route path="/products" element={<Product />} />
-          <Route path="/orderDetail" element={<OrderDetail />} />
+          <Route path="/orderdetail" element={<OrderDetail />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/users" element={<UsersPage />} />
         </Route>

@@ -8,6 +8,7 @@ import {
   fetchSaveProduct,
 } from "../../redux/actions";
 import CustomPagination from "../CustomPagination";
+import { Box } from "@mui/material";
 
 const Product = () => {
   const dispatch = useDispatch();
@@ -90,7 +91,7 @@ const Product = () => {
   }, [currentPage]);
 
   return (
-    <>
+    <Box sx={{ height: "calc(100vh - 4rem)", overflow: "auto" }}>
       <Container>
         <h3 className="my-3">
           Prodotti totali: {data.page && data.page.totalElements}
@@ -270,7 +271,7 @@ const Product = () => {
           </Modal.Footer>
         </Form>
       </Modal>
-    </>
+    </Box>
   );
 };
 export default Product;

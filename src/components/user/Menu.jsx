@@ -32,7 +32,7 @@ const Menu = () => {
   }, [dispatch]);
 
   return (
-    <div style={{ display: "flex", backgroundColor: "#071535" }}>
+    <div style={{ display: "flex" }}>
       <StyledList>
         <ListItem
           sx={{

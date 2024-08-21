@@ -9,6 +9,10 @@ import {
   InputBase,
   GlobalStyles,
   useTheme,
+  Button,
+  Menu,
+  TableCell,
+  tableCellClasses,
 } from "@mui/material";
 
 export const GlobalScrollbarStyles = () => {
@@ -117,7 +121,6 @@ export const BootstrapInput = styled(InputBase)(({ theme, error }) => ({
     position: "relative",
     backgroundColor: theme.palette.common.contrast,
     border: "1px solid",
-    // borderColor: theme.palette.secondary.main,
     borderColor: error
       ? theme.palette.error.main
       : theme.palette.secondary.main,
@@ -132,8 +135,6 @@ export const BootstrapInput = styled(InputBase)(({ theme, error }) => ({
       backgroundColor: theme.palette.common.white,
     },
     "&:focus": {
-      // boxShadow: `${alpha(theme.palette.secondary.main, 0.25)} 0 0 0 0.2rem`,
-      // borderColor: theme.palette.secondary.main,
       boxShadow: `${alpha(
         error ? theme.palette.error.main : theme.palette.secondary.main,
         0.25
@@ -142,5 +143,37 @@ export const BootstrapInput = styled(InputBase)(({ theme, error }) => ({
         ? theme.palette.error.main
         : theme.palette.secondary.main,
     },
+  },
+}));
+
+export const NavbarButton = styled((props) => (
+  <Button disableRipple {...props} />
+))(({ theme }) => ({
+  color: theme.palette.text.light,
+  marginRight: "2.5rem",
+  "&:hover": {
+    color: theme.palette.common.white,
+  },
+}));
+
+export const StyledMenu = styled(Menu)(({ theme }) => ({
+  "& .MuiPaper-root": {
+    minWidth: "165px",
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.contrast,
+  },
+  "& .MuiMenuItem-root": {
+    "&:hover": {
+      color: theme.palette.common.white,
+    },
+  },
+}));
+
+export const StyledTableCell = styled((props) => (
+  <TableCell size="small" {...props} />
+))(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.common.darkRed,
   },
 }));

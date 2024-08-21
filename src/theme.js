@@ -1,14 +1,5 @@
 import { createTheme } from "@mui/material";
 
-// const darkBlue = "#03045eff";
-// const blue = "#023e8aff";
-// const mediumblue = "#0077b6ff";
-// const lightBlue = "#0096c7ff";
-// const darkSky = "#00b4d8ff";
-// const sky = "#48cae4ff";
-// const mediumSyy = "#90e0efff";
-// const lightSky = "#ade8f4ff";
-
 const dark = "#001219ff";
 const lightDark = "#222222";
 const primary = "#171b4d";
@@ -40,7 +31,6 @@ export default createTheme({
     },
     primary: {
       main: primary,
-      // light: "#1565c0",
       light: "#003989",
     },
     secondary: {
@@ -52,7 +42,7 @@ export default createTheme({
     },
     background: {
       paper: contrast,
-      default: "#ffffff",
+      default: "#071535",
     },
     text: {
       dark: dark,

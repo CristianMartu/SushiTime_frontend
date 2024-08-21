@@ -8,14 +8,16 @@ import {
   Typography,
   Grid,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { IoPerson } from "react-icons/io5";
 
 const History = () => {
-  const matchesSM = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
   const order = useSelector((state) => state.orderDetail.byOrder);
   const orders = useSelector((state) => state.orderDetail.all);
+  const theme = useTheme();
+  const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     if (order.id) {
@@ -95,13 +97,17 @@ const History = () => {
               my: 3,
               borderRadius: "12px",
               border: "2px solid",
-              borderColor: (theme) => theme.palette.secondary.main,
+              borderColor: theme.palette.secondary.main,
               padding: 0,
               overflow: "hidden",
             }}
           >
             <ListItem
-              sx={{ backgroundColor: "secondary.main", color: "white" }}
+              sx={{
+                backgroundColor: "secondary.main",
+                //  color: "white"
+                color: theme.palette.common.primary,
+              }}
             >
               <Grid container>
                 <Grid item xs={12} sm>
@@ -130,11 +136,11 @@ const History = () => {
                 sx={{
                   backgroundColor: "background.paper",
                   borderBottom: `1px solid`,
-                  borderBottomColor: (theme) => theme.palette.secondary.main,
+                  borderBottomColor: theme.palette.secondary.main,
                   ":last-of-type": {
                     borderBottom: `0px`,
                   },
-                  color: (theme) => theme.palette.text.dark,
+                  color: theme.palette.text.dark,
                 }}
               >
                 <Grid container alignItems="center" spacing={2}>
