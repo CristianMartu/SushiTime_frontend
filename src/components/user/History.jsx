@@ -5,13 +5,14 @@ import {
   Container,
   List,
   ListItem,
-  ListItemText,
   Typography,
   Grid,
+  useMediaQuery,
 } from "@mui/material";
 import { IoPerson } from "react-icons/io5";
 
 const History = () => {
+  const matchesSM = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
   const order = useSelector((state) => state.orderDetail.byOrder);
   const orders = useSelector((state) => state.orderDetail.all);
@@ -64,8 +65,8 @@ const History = () => {
       <List sx={{ mt: 2 }}>
         <ListItem
           sx={{
-            backgroundColor: "#1565c0",
-            // backgroundColor: "secondary.main",
+            // backgroundColor: "#1565c0", //#003989
+            backgroundColor: "#003989",
             color: "white",
             overflow: "hidden",
             borderRadius: "12px",
@@ -73,13 +74,13 @@ const History = () => {
           }}
         >
           <Grid container>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="body1">
+            <Grid item xs={12} sm>
+              <Typography variant="h6">
                 Prezzo Totale: {orders.content && formatPrice(sumPrices())}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6} sx={{ textAlign: "right" }}>
-              <Typography variant="body1">
+            <Grid item xs={12} sm sx={{ textAlign: "right" }}>
+              <Typography variant="h6">
                 <IoPerson /> {order.table ? order.table.currentPeople : 0}
               </Typography>
             </Grid>
@@ -95,7 +96,6 @@ const History = () => {
               borderRadius: "12px",
               border: "2px solid",
               borderColor: (theme) => theme.palette.secondary.main,
-              // backgroundColor: "background.paper",
               padding: 0,
               overflow: "hidden",
             }}
@@ -103,15 +103,30 @@ const History = () => {
             <ListItem
               sx={{ backgroundColor: "secondary.main", color: "white" }}
             >
-              <ListItemText
-                primary={dateFormat(element[0].orderTime)}
-                sx={{ textAlign: "center" }}
-              />
+              <Grid container>
+                <Grid item xs={12} sm>
+                  <Typography variant="body1">
+                    {dateFormat(element[0].orderTime)}
+                  </Typography>
+                </Grid>
+                {!matchesSM && (
+                  <>
+                    <Grid item xs={2} md={0} sx={{ textAlign: "center" }}>
+                      <Typography variant="body1">QUANTITÀ</Typography>
+                    </Grid>
+                    <Grid item xs={0}>
+                      <Typography variant="body1">PREZZO</Typography>
+                    </Grid>
+                    <Grid item sm={3} md={2} sx={{ textAlign: "center" }}>
+                      <Typography variant="body1">STATO</Typography>
+                    </Grid>
+                  </>
+                )}
+              </Grid>
             </ListItem>
             {element.map((order) => (
               <ListItem
                 key={order.id}
-                // divider
                 sx={{
                   backgroundColor: "background.paper",
                   borderBottom: `1px solid`,
@@ -123,19 +138,24 @@ const History = () => {
                 }}
               >
                 <Grid container alignItems="center" spacing={2}>
-                  <Grid item xs>
-                    <Typography>
-                      {order.product.number} {order.product.name}
+                  <Grid item sm={1}>
+                    <Typography variant="h6">{order.product.number}</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm>
+                    <Typography variant="h6">{order.product.name}</Typography>
+                  </Grid>
+                  <Grid item xs={1}>
+                    <Typography variant="h6">{order.quantity}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="h6">
+                      {formatPrice(order.price)}
                     </Typography>
                   </Grid>
-                  <Grid item>
-                    <Typography>{formatPrice(order.price)}</Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography>{order.quantity}</Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography>{order.state}</Typography>
+                  <Grid item sm={3} md={2}>
+                    <Typography sx={{ textAlign: "end" }}>
+                      {order.state}
+                    </Typography>
                   </Grid>
                 </Grid>
               </ListItem>

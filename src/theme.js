@@ -20,12 +20,14 @@ const darkOrange = "#bb3e03ff";
 const red = "#d32f2f";
 const darkRed = "#9b2226ff";
 const contrast = "#caf0f8ff";
+const lightGray = "#abb2b78a";
 
 export default createTheme({
   palette: {
     common: {
       dark: dark,
       lightDark: lightDark,
+      lightGray: lightGray,
       primary: primary,
       secondary: secondary,
       vanilla: vanilla,
@@ -38,8 +40,8 @@ export default createTheme({
     },
     primary: {
       main: primary,
-      light: "#1565c0",
-      //   main: darkBlue,
+      // light: "#1565c0",
+      light: "#003989",
     },
     secondary: {
       main: secondary,
@@ -92,7 +94,8 @@ export default createTheme({
       fontSize: "0.833rem",
     },
     button: {
-      fontWeight: 400,
+      fontWeight: 500,
+      textTransform: "none",
     },
   },
 });

@@ -16,14 +16,11 @@ import HomeNavbar from "./components/admin/HomeNavbar";
 import Order from "./components/admin/Order";
 import MyTable from "./components/admin/MyTable";
 import Product from "./components/admin/Product";
-import ErrorHandler from "./components/ErrorHandler";
 import OrderDetail from "./components/admin/OrderDetail";
 import Login from "./components/Login";
 import { useEffect, useState } from "react";
 import Profile from "./components/admin/Profile";
 import UsersPage from "./components/admin/UsersPage";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import theme from "./theme";
 import { useDispatch } from "react-redux";
 import { fetchCurrentUser } from "./redux/actions";
 
@@ -71,24 +68,20 @@ function App() {
 
   return (
     <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <ErrorHandler />
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/menu" element={<Menu />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/exit" element={<Exit />} />
-            <Route path="/orders" element={<Order />} />
-            <Route path="/tables" element={<MyTable />} />
-            <Route path="/products" element={<Product />} />
-            <Route path="/orderDetail" element={<OrderDetail />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/users" element={<UsersPage />} />
-          </Route>
-          <Route path="/" element={<Login />} />
-        </Routes>
-      </ThemeProvider>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/exit" element={<Exit />} />
+          <Route path="/orders" element={<Order />} />
+          <Route path="/tables" element={<MyTable />} />
+          <Route path="/products" element={<Product />} />
+          <Route path="/orderDetail" element={<OrderDetail />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/users" element={<UsersPage />} />
+        </Route>
+        <Route path="/" element={<Login />} />
+      </Routes>
     </BrowserRouter>
   );
 }

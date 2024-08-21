@@ -8,6 +8,7 @@ import {
   Grid,
   IconButton,
   Box,
+  alpha,
 } from "@mui/material";
 import { FaMinus } from "react-icons/fa";
 import { TiPlus } from "react-icons/ti";
@@ -49,6 +50,7 @@ const Products = ({ categoryName }) => {
 
   useEffect(() => {
     menuFetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryName]);
 
   const saveAddProduct = useSelector((state) => state.product.content);
@@ -108,12 +110,14 @@ const Products = ({ categoryName }) => {
                     borderColor: isSaved(product.id)
                       ? "common.darkRed"
                       : "secondary.main",
-                    backgroundColor: "common.white",
+                    boxShadow: isSaved(product.id)
+                      ? `${alpha("#9b2226ff", 0.1)} 0px 4px 12px 2px`
+                      : `0px 4px 8px rgba(0, 0, 0, 0.4)`,
+                    backgroundColor: "common.contrast",
                     borderWidth: 2,
                     borderStyle: "solid",
                     borderRadius: "16px",
                     overflow: "hidden",
-                    boxShadow: 3,
                     marginInlineStart: "20px",
                   }}
                 >
@@ -130,8 +134,8 @@ const Products = ({ categoryName }) => {
                     </Typography>
                     <Typography
                       variant="h6"
-                      color="secondary"
-                      sx={{ mt: "auto" }}
+                      color={(theme) => theme.palette.common.darkRed}
+                      sx={{ mt: "auto", fontWeight: "bold" }}
                     >
                       {getProductPrice(product.category.name, product.price)}
                     </Typography>
@@ -182,7 +186,7 @@ const Products = ({ categoryName }) => {
           })}
         </Grid>
       ) : (
-        <Typography>Nessun risultato</Typography>
+        <></>
       )}
     </Box>
   );

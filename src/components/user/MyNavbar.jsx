@@ -12,8 +12,9 @@ import {
   Container,
   IconButton,
   List,
-  ListItemText,
+  Modal,
   Typography,
+  useTheme,
 } from "@mui/material";
 
 import {
@@ -22,14 +23,10 @@ import {
   saveOrderDetails,
 } from "../../redux/actions";
 
-import {
-  StyledAppBar,
-  StyledModal,
-  ModalBox,
-  StyledListItem,
-} from "./../../style/style";
+import { StyledAppBar, ModalBox, StyledListItem } from "./../../style/style";
 
 const MyNavbar = () => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const order = useSelector((state) => state.orderDetail.byOrder);
   const saveProduct = useSelector((state) => state.product.content);
@@ -68,7 +65,7 @@ const MyNavbar = () => {
     }));
 
     if (payload.length > 0) {
-      dispatch(saveOrderDetails(payload, orderId));
+      dispatch(saveOrderDetails(payload, order.id));
       console.log(JSON.stringify(payload));
     }
   };
@@ -117,12 +114,12 @@ const MyNavbar = () => {
             }}
           >
             <Typography
-              variant="h6"
+              variant="h5"
               component={Link}
               to="/menu"
               sx={{
                 textDecoration: "none",
-                color: (theme) => theme.palette.background.default,
+                color: theme.palette.background.default,
               }}
             >
               Tavolo {order.table ? order.table.number : 0}
@@ -134,14 +131,14 @@ const MyNavbar = () => {
                 color="inherit"
                 startIcon={<MdMenuBook />}
                 sx={{
-                  color: (theme) => theme.palette.text.light,
+                  color: theme.palette.text.light,
                   marginRight: 4,
                   "&:hover": {
-                    color: (theme) => theme.palette.common.white,
+                    color: theme.palette.common.white,
                   },
                 }}
               >
-                Menù
+                <Typography variant="body1">MENÙ</Typography>
               </Button>
               <Button
                 component={Link}
@@ -149,26 +146,42 @@ const MyNavbar = () => {
                 color="inherit"
                 startIcon={<CiStar />}
                 sx={{
-                  color: (theme) => theme.palette.text.light,
+                  color: theme.palette.text.light,
                   marginRight: 4,
                   "&:hover": {
-                    color: (theme) => theme.palette.common.white,
+                    color: theme.palette.common.white,
                   },
                 }}
               >
-                Storico
+                <Typography variant="body1">STORICO</Typography>
               </Button>
               <IconButton
                 color="inherit"
                 onClick={() => setShow(true)}
+                // sx={{
+                //   backgroundColor: theme.palette.secondary.main,
+                //   marginRight: 4,
+                //   padding: "10px",
+                //   border: "1px solid white",
+                // }}
                 sx={{
-                  backgroundColor: (theme) => theme.palette.secondary.main,
+                  backgroundColor: theme.palette.secondary.main,
                   marginRight: 4,
-                  padding: "10px",
-                  border: "1px solid white",
+                  padding: "15px",
+                  border: `6px solid ${theme.palette.primary.main}`,
+                  boxShadow: "0px 7px 5px -4px rgba(0, 0, 0, 1)",
+                  "&:hover": {
+                    backgroundColor: theme.palette.secondary.dark,
+                  },
+                  marginBlockStart: "28px",
                 }}
               >
-                <BsCart />
+                <BsCart
+                  style={{
+                    color: theme.palette.common.white,
+                    fontSize: "1.8rem",
+                  }}
+                />
               </IconButton>
               <Button
                 component={Link}
@@ -176,45 +189,68 @@ const MyNavbar = () => {
                 color="inherit"
                 startIcon={<RxExit />}
                 sx={{
-                  color: (theme) => theme.palette.text.light,
+                  color: theme.palette.text.light,
                   "&:hover": {
-                    color: (theme) => theme.palette.common.white,
+                    color: theme.palette.common.white,
                   },
                 }}
               >
-                Esci
+                <Typography variant="body1">ESCI</Typography>
               </Button>
             </Box>
           </Box>
         </Container>
       </StyledAppBar>
 
-      <StyledModal open={show} onClose={() => setShow(false)}>
+      <Modal open={show} onClose={() => setShow(false)}>
         <ModalBox>
           <Typography
-            variant="h6"
+            variant="h5"
             gutterBottom
-            sx={{ color: (theme) => theme.palette.primary.main }}
+            sx={{
+              color: theme.palette.primary.light,
+              fontWeight: "bold",
+            }}
           >
             Ordine
           </Typography>
-          <List>
+          <List
+            sx={{
+              maxHeight: "50vh",
+              overflowY: "auto",
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: theme.palette.common.lightGray,
+              },
+            }}
+          >
             {saveProduct.length > 0 ? (
               Object.values(viewProduct).map((key, index) => (
                 <StyledListItem key={index} divider>
-                  <ListItemText
-                    primary={`${key[0].number} ${key[0].name}:`}
-                    sx={{ color: (theme) => theme.palette.primary.main }}
-                  />
                   <Typography
-                    sx={{ color: (theme) => theme.palette.secondary.main }}
+                    variant="h6"
+                    sx={{
+                      marginInlineEnd: "auto",
+                      color: theme.palette.text.dark,
+                      // fontWeight: "650",
+                    }}
+                  >{`${key[0].number} ${key[0].name}:`}</Typography>
+                  <Typography
+                    sx={{
+                      color: theme.palette.primary.light,
+                    }}
                   >
                     {key.length}
                   </Typography>
                 </StyledListItem>
               ))
             ) : (
-              <Typography sx={{ color: (theme) => theme.palette.primary.main }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: theme.palette.primary.main,
+                  fontWeight: "",
+                }}
+              >
                 Nessun prodotto salvato
               </Typography>
             )}
@@ -232,24 +268,30 @@ const MyNavbar = () => {
               color="error"
               onClick={() => handleFetch()}
               sx={{
-                backgroundColor: (theme) => theme.palette.secondary.main,
+                paddingInline: "20px",
+                backgroundColor: theme.palette.secondary.main,
                 "&:hover": {
-                  backgroundColor: (theme) => theme.palette.info.main,
+                  backgroundColor: theme.palette.primary.light,
                 },
               }}
             >
-              Invio
+              <Typography variant="body1">INVIA</Typography>
             </Button>
-            <Typography sx={{ color: (theme) => theme.palette.primary.main }}>
+            <Typography
+              sx={{
+                color: theme.palette.primary.light,
+                fontWeight: "bold",
+              }}
+            >
               {saveProduct.length}/
               {order.table ? order.table.currentPeople * 6 : 0}
             </Typography>
-            <Typography sx={{ color: (theme) => theme.palette.primary.main }}>
+            <Typography sx={{ color: theme.palette.common.darkRed }}>
               {orderDetails.content && timeToNewOrder()}
             </Typography>
           </Box>
         </ModalBox>
-      </StyledModal>
+      </Modal>
     </>
   );
 };

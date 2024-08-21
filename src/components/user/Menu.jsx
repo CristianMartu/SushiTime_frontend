@@ -66,9 +66,7 @@ const Menu = () => {
             </StyledListItemMenu>
           ))
         ) : (
-          <Typography sx={{ textAlign: "center", padding: "1rem" }}>
-            Nessun risultato
-          </Typography>
+          <></>
         )}
       </StyledList>
 
@@ -76,7 +74,7 @@ const Menu = () => {
         {category.content ? (
           <Products categoryName={name || category.content[0]?.name} />
         ) : (
-          <Typography>Nessun risultato</Typography>
+          <></>
         )}
       </>
     </div>
