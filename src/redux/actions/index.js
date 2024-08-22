@@ -140,12 +140,12 @@ export const getAllOrderDetail = (payload) => ({
 });
 
 // GET ALL ORDER DETAIL
-export const fetchAllOrderDetail = (page = 0) => {
+export const fetchAllOrderDetail = (page = 0, rows = 10) => {
   return async (dispatch, getState) => {
     console.log("fetchAllOrderDetail", getState());
     try {
       const response = await fetch(
-        `${urlBase}/orders/details/state?page=${page}`,
+        `${urlBase}/orders/details/state?page=${page}&size=${rows}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -178,7 +178,7 @@ export const fetchAllDetailByOrder = (orderId) => {
     console.log("fetchAllDetailByOrder", getState());
     try {
       const response = await fetch(
-        `${urlBase}/orders/${orderId}/details?size=20`,
+        `${urlBase}/orders/${orderId}/details?size=50`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -226,7 +226,9 @@ export const fetchUpdateOrderDetail = (
       const data = await response.json();
       dispatch({ type: "GET_ALL_DETAIL_BY_ORDER", payload: data });
       dispatch(fetchAllOrderDetail(page));
-      dispatch(getOrder(orderId));
+      if (orderId) {
+        dispatch(getOrder(orderId));
+      }
     } catch (error) {
       console.log(error);
       dispatch(handleError(error.message));

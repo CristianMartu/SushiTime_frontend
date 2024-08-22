@@ -111,8 +111,8 @@ const History = () => {
             >
               <Grid container>
                 <Grid item xs={12} sm>
-                  <Typography variant="body1">
-                    {dateFormat(element[0].orderTime)}
+                  <Typography variant="h6">
+                    {dateFormat(element[0].orderTime, "HH:mm")}
                   </Typography>
                 </Grid>
                 {!matchesSM && (

@@ -13,7 +13,13 @@ import {
   Menu,
   TableCell,
   tableCellClasses,
+  TablePagination,
+  Paper,
+  DialogTitle,
+  DialogContent,
+  ToggleButtonGroup,
 } from "@mui/material";
+import { ToggleButton } from "react-bootstrap";
 
 export const GlobalScrollbarStyles = () => {
   const theme = useTheme();
@@ -156,6 +162,20 @@ export const NavbarButton = styled((props) => (
   },
 }));
 
+export const NavbarToggleButton = styled((props) => (
+  <ToggleButton {...props} />
+))(({ theme }) => ({
+  color: theme.palette.text.light,
+  marginRight: "2.5rem",
+  "&:hover": {
+    color: theme.palette.common.white,
+  },
+  "&.Mui-selected": {
+    color: theme.palette.primary.main, // Colore per il pulsante selezionato
+    backgroundColor: theme.palette.background.default, // Background del pulsante selezionato
+  },
+}));
+
 export const StyledMenu = styled(Menu)(({ theme }) => ({
   "& .MuiPaper-root": {
     minWidth: "165px",
@@ -173,7 +193,49 @@ export const StyledTableCell = styled((props) => (
   <TableCell size="small" {...props} />
 ))(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.secondary.main,
-    color: theme.palette.common.darkRed,
+    backgroundColor: theme.palette.background.dark,
+    color: theme.palette.common.primary,
+    border: 0,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    borderColor: theme.palette.background.dark,
   },
 }));
+
+export const StyledTablePagination = styled(TablePagination)(({ theme }) => ({
+  backgroundColor: theme.palette.background.dark,
+  color: theme.palette.common.primary,
+  border: 0,
+}));
+
+export const TablePaper = styled(Paper)({
+  borderRadius: "6px",
+  overflow: "hidden",
+  marginBlockEnd: "1rem",
+});
+
+export const ModalDialogTitle = styled(DialogTitle)(({ theme }) => ({
+  borderBlockEnd: `1px solid ${theme.palette.background.dark}`,
+  color: theme.palette.common.primary,
+}));
+
+export const ModalDialogContent = styled(DialogContent)(({ theme }) => ({
+  color: theme.palette.common.primary,
+  marginBlock: "2rem",
+}));
+
+export const ModalToggleButtonGroup = styled(ToggleButtonGroup)(
+  ({ theme }) => ({
+    "& .MuiToggleButton-root": {
+      // backgroundColor: theme.palette.common.lightDark,
+      // color: theme.palette.common.contrast,
+      "&.Mui-selected": {
+        backgroundColor: theme.palette.common.darkContrast,
+        color: theme.palette.common.darkRed,
+        // color: theme.palette.common.lightDark,
+        // border: "1.5px solid",
+        // borderColor: theme.palette.common.lightGray,
+      },
+    },
+  })
+);

@@ -10,8 +10,10 @@ const mediumOrange = "#ca6702ff";
 const darkOrange = "#bb3e03ff";
 const red = "#d32f2f";
 const darkRed = "#9b2226ff";
-const contrast = "#caf0f8ff";
 const lightGray = "#abb2b78a";
+// const contrast = "#caf0f8ff";
+const contrast = "#e3f6fb";
+const darkContrast = "#a8d9e1";
 
 export default createTheme({
   palette: {
@@ -28,6 +30,7 @@ export default createTheme({
       red: red,
       darkRed: darkRed,
       contrast: contrast,
+      darkContrast: darkContrast,
     },
     primary: {
       main: primary,
@@ -42,6 +45,7 @@ export default createTheme({
     },
     background: {
       paper: contrast,
+      dark: darkContrast,
       default: "#071535",
     },
     text: {
