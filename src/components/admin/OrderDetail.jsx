@@ -65,13 +65,11 @@ const OrderDetail = () => {
   const handleRowsPerPageChange = (newRowsPerPage) => {
     setRowsPerPage(newRowsPerPage);
   };
-
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   const dateFormat = (dateStr, format = "HH:mm") => {
-    // const dateFormat = (dateStr, format = "YYYY-MM-DD HH:mm") => {
     const dateObj = new Date(dateStr);
     const parts = {
       YYYY: dateObj.getFullYear(),
@@ -168,9 +166,7 @@ const OrderDetail = () => {
           </TableContainer>
           {orderDetails.page && orderDetails.page.totalElements > 1 && (
             <CustomTablePagination
-              totalPages={
-                orderDetails.page ? orderDetails.page.totalElements : 0
-              }
+              totalPages={orderDetails.page.totalElements}
               currentPage={currentPage}
               onPageChange={handlePageChange}
               rowsPerPage={rowsPerPage}
@@ -284,9 +280,9 @@ const OrderDetail = () => {
           </ModalToggleButtonGroup>
         </ModalDialogContent>
         <DialogActions sx={{ backgroundColor: "background.paper" }}>
-          {/* <Button onClick={handleCloseModal} sx={{ color: "secondary.main" }}>
+          <Button onClick={handleCloseModal} color="primary">
             Annulla
-          </Button> */}
+          </Button>
           <Button
             variant="contained"
             onClick={handleSaveChanges}

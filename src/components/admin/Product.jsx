@@ -1,14 +1,29 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Container, Form, Modal, Table } from "react-bootstrap";
 import {
   fetchAllProduct,
   fetchDeleteProduct,
   fetchPutProduct,
   fetchSaveProduct,
 } from "../../redux/actions";
-import CustomPagination from "../CustomPagination";
-import { Box } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { StyledTableCell, TablePaper } from "../../style/style";
+import CustomTablePagination from "../CustomTablePagination";
 
 const Product = () => {
   const dispatch = useDispatch();
@@ -80,197 +95,230 @@ const Product = () => {
     dispatch(fetchDeleteProduct(attProductView.id, currentPage));
   };
 
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
+  const handleRowsPerPageChange = (newRowsPerPage) => {
+    setRowsPerPage(newRowsPerPage);
+  };
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   useEffect(() => {
-    dispatch(fetchAllProduct(currentPage));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage]);
+    dispatch(fetchAllProduct(currentPage, rowsPerPage));
+  }, [currentPage, dispatch, rowsPerPage]);
 
   return (
     <Box sx={{ height: "calc(100vh - 4rem)", overflow: "auto" }}>
-      <Container>
-        <h3 className="my-3">
-          Prodotti totali: {data.page && data.page.totalElements}
-        </h3>
-        <Button className="mb-3" onClick={() => setShowModal(true)}>
-          Aggiungi prodotto
-        </Button>
-        <Table
-          striped
-          bordered
-          hover
-          variant="dark"
-          className="text-center"
-          responsive="sm"
+      <Container
+        maxWidth="lg"
+        sx={{
+          paddingBlock: "1rem",
+        }}
+      >
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => setShowModal(true)}
+          sx={{ marginBlockEnd: 1 }}
         >
-          <thead>
-            <tr>
-              <th>Numero</th>
-              <th>Nome</th>
-              <th>Descrizione</th>
-              <th>Prezzo</th>
-              <th>Url immagine</th>
-              <th>Categoria</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.content &&
-              data.content.map((product) => (
-                <tr
-                  key={product.id}
-                  onClick={() => {
-                    setAttProductView({
-                      name: product.name,
-                      description: product.description,
-                      price: product.price,
-                      image: product.image,
-                      number: product.number,
-                      category: product.category.name,
-                      id: product.id,
-                    });
-                    setShowModal(true);
-                    setShowModalUpdate(true);
-                  }}
-                >
-                  <td>{product.number}</td>
-                  <td>{product.name}</td>
-                  <td>{product.description}</td>
-                  <td>{product.price}</td>
-                  <td>{product.image}</td>
-                  <td>{product.category.name}</td>
-                </tr>
-              ))}
-          </tbody>
-        </Table>
-        {data.page && data.page.totalPages > 1 && (
-          <CustomPagination
-            totalPages={data.page ? data.page.totalPages : 0}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
-        )}
+          <Typography variant="h6">Aggiungi prodotto</Typography>
+        </Button>
+        <TablePaper>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell align="center">
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      Numero
+                    </Typography>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      Nome
+                    </Typography>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      Descrizione
+                    </Typography>
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      Prezzo
+                    </Typography>
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      Categoria
+                    </Typography>
+                  </StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.content &&
+                  data.content.map((product) => (
+                    <TableRow
+                      key={product.id}
+                      onClick={() => {
+                        setAttProductView({
+                          name: product.name,
+                          description: product.description,
+                          price: product.price,
+                          image: product.image,
+                          number: product.number,
+                          category: product.category.name,
+                          id: product.id,
+                        });
+                        setShowModal(true);
+                        setShowModalUpdate(true);
+                      }}
+                      hover
+                    >
+                      <StyledTableCell align="center">
+                        <Typography>{product.number}</Typography>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Typography>{product.name}</Typography>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Typography>{product.description}</Typography>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Typography>{product.price} &euro;</Typography>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Typography>{product.category.name}</Typography>
+                      </StyledTableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {data.page && data.page.totalElements > 1 && (
+            <CustomTablePagination
+              totalPages={data.page.totalElements}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleRowsPerPageChange}
+            />
+          )}
+        </TablePaper>
       </Container>
 
-      <Modal
-        show={showModal}
-        onHide={handleCloseModal}
-        backdrop="static"
-        keyboard={false}
-        centered
+      <Dialog
+        open={showModal}
+        onClose={handleCloseModal}
+        fullWidth
+        maxWidth="sm"
+        // disableEscapeKeyDown
       >
-        <Form onSubmit={handleSubmit}>
-          <Modal.Header closeButton>
-            <h3>{showModalUpdate ? "Modifica prodotto" : "Nuovo prodotto"}</h3>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Group className="mb-3" controlId="name">
-              <Form.Label>Nome</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder={
-                  attProductView.name
-                    ? attProductView.name
-                    : "Inserisci un nome"
-                }
-                value={attProduct.name}
-                onChange={handleChangeAttProduct}
-                autoFocus={showModalUpdate ? false : true}
-                required={showModalUpdate ? false : true}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="description">
-              <Form.Label>Descrizione</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder={
-                  attProductView.description
-                    ? attProductView.description
-                    : "Inserisci una descrizione"
-                }
-                value={attProduct.description}
-                onChange={handleChangeAttProduct}
-                required={showModalUpdate ? false : true}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="price">
-              <Form.Label>Prezzo</Form.Label>
-              <Form.Control
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder={
-                  attProductView.price
-                    ? attProductView.price
-                    : "Inserisci un prezzo"
-                }
-                value={attProduct.price}
-                onChange={handleChangeAttProduct}
-                required={showModalUpdate ? false : true}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="image">
-              <Form.Label>Immagine URL</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder={
-                  attProductView.image
-                    ? attProductView.image
-                    : "Inserisci un URL per l'immagine"
-                }
-                value={attProduct.image}
-                onChange={handleChangeAttProduct}
-                required={showModalUpdate ? false : true}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="number">
-              <Form.Label>Numero</Form.Label>
-              <Form.Control
-                type="number"
-                min="0"
-                placeholder={
-                  attProductView.number
-                    ? attProductView.number
-                    : "Inserisci un numero"
-                }
-                value={attProduct.number}
-                onChange={handleChangeAttProduct}
-                required={showModalUpdate ? false : true}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="category">
-              <Form.Label>Categoria</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder={
-                  attProductView.category
-                    ? attProductView.category
-                    : "Inserisci una categoria"
-                }
-                value={attProduct.category}
-                onChange={handleChangeAttProduct}
-                required={showModalUpdate ? false : true}
-              />
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseModal}>
+        <form onSubmit={handleSubmit}>
+          <DialogTitle variant="h5">
+            {showModalUpdate ? "Modifica prodotto" : "Nuovo prodotto"}
+          </DialogTitle>
+          <DialogContent dividers>
+            <TextField
+              autoFocus={!showModalUpdate}
+              margin="dense"
+              id="name"
+              label="Nome"
+              type="text"
+              fullWidth
+              value={attProduct.name}
+              onChange={handleChangeAttProduct}
+              placeholder={attProductView.name || "Inserisci un nome"}
+              InputLabelProps={{ shrink: showModalUpdate ? true : undefined }}
+              required={!showModalUpdate}
+            />
+            <TextField
+              margin="dense"
+              id="description"
+              label="Descrizione"
+              type="text"
+              fullWidth
+              value={attProduct.description}
+              onChange={handleChangeAttProduct}
+              placeholder={
+                attProductView.description || "Inserisci una descrizione"
+              }
+              InputLabelProps={{ shrink: showModalUpdate ? true : undefined }}
+              required={!showModalUpdate}
+            />
+            <TextField
+              margin="dense"
+              id="price"
+              label="Prezzo"
+              type="number"
+              fullWidth
+              value={attProduct.price}
+              onChange={handleChangeAttProduct}
+              placeholder={
+                attProductView.price?.toString() || "Inserisci un prezzo"
+              }
+              InputLabelProps={{ shrink: showModalUpdate ? true : undefined }}
+              inputProps={{ min: 0, step: 0.01 }}
+              required={!showModalUpdate}
+            />
+            <TextField
+              margin="dense"
+              id="image"
+              label="Immagine URL"
+              type="text"
+              fullWidth
+              value={attProduct.image}
+              onChange={handleChangeAttProduct}
+              placeholder={
+                attProductView.image || "Inserisci un URL per l'immagine"
+              }
+              InputLabelProps={{ shrink: showModalUpdate ? true : undefined }}
+              required={!showModalUpdate}
+            />
+            <TextField
+              margin="dense"
+              id="number"
+              label="Numero"
+              type="number"
+              fullWidth
+              value={attProduct.number}
+              onChange={handleChangeAttProduct}
+              placeholder={
+                attProductView.number?.toString() || "Inserisci un numero"
+              }
+              InputLabelProps={{ shrink: showModalUpdate ? true : undefined }}
+              inputProps={{ min: 0 }}
+              required={!showModalUpdate}
+            />
+            <TextField
+              margin="dense"
+              id="category"
+              label="Categoria"
+              type="text"
+              fullWidth
+              value={attProduct.category}
+              onChange={handleChangeAttProduct}
+              placeholder={attProductView.category || "Inserisci una categoria"}
+              InputLabelProps={{ shrink: showModalUpdate ? true : undefined }}
+              required={!showModalUpdate}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal} color="primary">
               Annulla
             </Button>
             {showModalUpdate && (
-              <Button variant="outline-danger" onClick={handleDelete}>
+              <Button onClick={handleDelete} color="error" variant="outlined">
                 Elimina
               </Button>
             )}
-            <Button variant="primary" type="submit">
+            <Button type="submit" variant="contained" color="primary">
               {showModalUpdate ? "Modifica" : "Salva"}
             </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
+          </DialogActions>
+        </form>
+      </Dialog>
     </Box>
   );
 };

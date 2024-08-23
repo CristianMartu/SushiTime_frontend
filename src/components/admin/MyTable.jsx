@@ -1,28 +1,42 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  Button,
-  ButtonGroup,
-  Container,
-  Form,
-  Modal,
-  Table,
-  ToggleButton,
-} from "react-bootstrap";
-import {
   fetchAllTable,
   fetchDeleteTable,
   fetchPatchTable,
   fetchPatchTableState,
   fetchSaveTable,
 } from "../../redux/actions";
-import CustomPagination from "../CustomPagination";
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  ToggleButton,
+  Typography,
+} from "@mui/material";
+import {
+  ModalToggleButtonGroup,
+  StyledTableCell,
+  TablePaper,
+} from "../../style/style";
+import CustomTablePagination from "../CustomTablePagination";
 
 const MyTable = () => {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.table.all);
   const [showModal, setShowModal] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [stateValue, setStateValue] = useState();
 
@@ -58,7 +72,8 @@ const MyTable = () => {
     }));
   };
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = (event) => {
+    event.preventDefault();
     handleCloseModal();
     const payload = { ...createTable };
     // console.log("Payload:", payload);
@@ -72,6 +87,9 @@ const MyTable = () => {
     } else dispatch(fetchSaveTable(payload, currentPage));
   };
 
+  const handleRowsPerPageChange = (newRowsPerPage) => {
+    setRowsPerPage(newRowsPerPage);
+  };
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -88,155 +106,187 @@ const MyTable = () => {
   ];
 
   useEffect(() => {
-    dispatch(fetchAllTable(currentPage));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage]);
+    dispatch(fetchAllTable(currentPage, rowsPerPage));
+  }, [currentPage, dispatch, rowsPerPage]);
 
   return (
     <>
-      <Container>
-        <h3 className="my-3">
-          Tavoli totali: {data.page && data.page.totalElements}
-        </h3>
-        <Button className="mb-3" onClick={() => setShowModal(true)}>
-          Aggiungi tavolo
-        </Button>
-        <Table
-          striped
-          bordered
-          hover
-          variant="secondary"
-          className="text-center"
-          responsive="sm"
+      <Box sx={{ height: "calc(100vh - 4rem)", overflow: "auto" }}>
+        <Container
+          maxWidth="lg"
+          sx={{
+            paddingBlock: "1rem",
+          }}
         >
-          <thead>
-            <tr>
-              <th>Numero tavolo</th>
-              <th>Massima capacità</th>
-              <th>Persone correnti</th>
-              <th>Stato</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.content &&
-              data.content.map((table) => (
-                <tr
-                  key={table.id}
-                  onClick={() => {
-                    setCreateTable({
-                      number: table.number,
-                      maxCapacity: table.maxCapacity,
-                      currentPeople: table.currentPeople,
-                      tableId: table.id,
-                      state: table.state,
-                    });
-                    setShowModal(true);
-                    setShowModalUpdate(true);
-                  }}
-                >
-                  <td>{table.number}</td>
-                  <td>{table.maxCapacity}</td>
-                  <td>{table.currentPeople}</td>
-                  <td>{table.state}</td>
-                </tr>
-              ))}
-          </tbody>
-        </Table>
-        {data.page && data.page.totalPages > 1 && (
-          <CustomPagination
-            totalPages={data.page.totalPages}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
-        )}
-      </Container>
-      <Modal
-        show={showModal}
-        onHide={handleCloseModal}
-        backdrop="static"
-        keyboard={false}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {showModalUpdate ? "Modifica tavolo" : "Nuovo Tavolo"}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="number">
-              <Form.Label>Numero</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Inserisci un numero"
-                min="1"
-                step="1"
-                value={createTable.number}
-                onChange={handleChangeCreateTable}
-                autoFocus
-                readOnly={showModalUpdate && true}
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setShowModal(true)}
+            sx={{ marginBlockEnd: 1 }}
+          >
+            <Typography variant="h6">Aggiungi tavolo</Typography>
+          </Button>
+          <TablePaper>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Numero tavolo
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Massima capacità
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Persone correnti
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Stato
+                      </Typography>
+                    </StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.content &&
+                    data.content.map((table) => (
+                      <TableRow
+                        key={table.id}
+                        onClick={() => {
+                          setCreateTable({
+                            number: table.number,
+                            maxCapacity: table.maxCapacity,
+                            currentPeople: table.currentPeople,
+                            tableId: table.id,
+                            state: table.state,
+                          });
+                          setShowModal(true);
+                          setShowModalUpdate(true);
+                        }}
+                        hover
+                      >
+                        <StyledTableCell align="center">
+                          <Typography>{table.number}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Typography>{table.maxCapacity}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Typography>{table.currentPeople}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Typography>{table.state}</Typography>
+                        </StyledTableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {data.page && data.page.totalElements > 1 && (
+              <CustomTablePagination
+                totalPages={data.page.totalElements}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleRowsPerPageChange}
               />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="maxCapacity">
-              <Form.Label>Capacità massima</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Inserisci un numero"
-                min="1"
-                step="1"
-                value={createTable.maxCapacity}
-                onChange={handleChangeCreateTable}
-              />
-            </Form.Group>
-            {showModalUpdate && (
-              <Form.Group className="mb-3" controlId="currentPeople">
-                <Form.Label>Persone attuali</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Inserisci un numero"
-                  min="1"
-                  step="1"
-                  value={createTable.currentPeople}
-                  onChange={handleChangeCreateTable}
-                  autoFocus
-                />
-              </Form.Group>
             )}
-          </Form>
-          <ButtonGroup>
-            {showModalUpdate &&
-              createTable.state != "OCCUPIED" &&
-              getState.map((state, idx) => (
-                <ToggleButton
-                  key={idx}
-                  id={`state-${idx}`}
-                  type="radio"
-                  variant="outline-primary"
-                  value={state.value}
-                  checked={stateValue === state.value}
-                  onChange={(e) => {
-                    setStateValue(e.currentTarget.value);
-                  }}
-                >
-                  {state.name}
-                </ToggleButton>
-              ))}
-          </ButtonGroup>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Annulla
-          </Button>
-          {showModalUpdate && (
-            <Button variant="outline-danger" onClick={handleDelete}>
-              Elimina
+          </TablePaper>
+        </Container>
+      </Box>
+
+      <Dialog
+        open={showModal}
+        onClose={handleCloseModal}
+        fullWidth
+        maxWidth="sm"
+      >
+        <form onSubmit={handleSaveChanges}>
+          <DialogTitle variant="h5">
+            {showModalUpdate ? "Modifica tavolo" : "Nuovo Tavolo"}
+          </DialogTitle>
+          <DialogContent dividers sx={{ marginBlock: 2 }}>
+            <TextField
+              margin="dense"
+              id="number"
+              label="Numero"
+              type="number"
+              fullWidth
+              value={createTable.number}
+              onChange={handleChangeCreateTable}
+              placeholder="Inserisci un numero"
+              InputLabelProps={{ shrink: showModalUpdate ? true : undefined }}
+              inputProps={{ min: 1, step: 1 }}
+              autoFocus={!showModalUpdate}
+              disabled={showModalUpdate}
+              required
+            />
+            <TextField
+              margin="dense"
+              id="maxCapacity"
+              label="Capacità massima"
+              type="number"
+              fullWidth
+              value={createTable.maxCapacity}
+              onChange={handleChangeCreateTable}
+              placeholder="Inserisci un numero"
+              InputLabelProps={{ shrink: showModalUpdate ? true : undefined }}
+              inputProps={{ min: 1, step: 1 }}
+              required
+            />
+            {showModalUpdate && (
+              <TextField
+                margin="dense"
+                id="currentPeople"
+                label="Persone attuali"
+                type="number"
+                fullWidth
+                value={createTable.currentPeople}
+                onChange={handleChangeCreateTable}
+                placeholder="Inserisci un numero"
+                InputLabelProps={{ shrink: true }}
+                inputProps={{ min: 1, step: 1 }}
+                autoFocus
+              />
+            )}
+            {showModalUpdate && createTable.state !== "OCCUPIED" && (
+              <ModalToggleButtonGroup
+                value={stateValue}
+                exclusive
+                onChange={(e, newValue) => setStateValue(newValue)}
+                color="primary"
+                fullWidth
+                sx={{ marginBlock: 3 }}
+              >
+                {getState.map((state, idx) => (
+                  <ToggleButton key={idx} value={state.value}>
+                    {state.name}
+                  </ToggleButton>
+                ))}
+              </ModalToggleButtonGroup>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal} color="primary">
+              Annulla
             </Button>
-          )}
-          <Button variant="primary" onClick={handleSaveChanges}>
-            {showModalUpdate ? "Modifica" : "Salva"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+            {showModalUpdate && (
+              <Button onClick={handleDelete} color="error" variant="outlined">
+                Elimina
+              </Button>
+            )}
+            <Button type="submit" variant="contained" color="primary">
+              {showModalUpdate ? "Modifica" : "Salva"}
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
     </>
   );
 };

@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  Button,
-  ButtonGroup,
-  Container,
-  Form,
-  Modal,
-  Table,
-  ToggleButton,
-} from "react-bootstrap";
-import {
   fetchAllOrder,
   fetchAllOrderState,
   fetchAllTableState,
@@ -20,10 +11,35 @@ import {
 } from "../../redux/actions";
 import { useNavigate } from "react-router-dom";
 import { MdMenuBook } from "react-icons/md";
-import CustomPagination from "../CustomPagination";
 import { CiStar } from "react-icons/ci";
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  ToggleButton,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import {
+  ModalToggleButtonGroup,
+  StyledDarkTableCell,
+  StyledTableCell,
+  TablePaper,
+} from "../../style/style";
+import CustomTablePagination from "../CustomTablePagination";
 
 const Order = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const data = useSelector((state) => state.order.all);
@@ -39,18 +55,30 @@ const Order = () => {
   const [stateValue, setStateValue] = useState();
   const [selectedOrder, setSelectedOrder] = useState();
 
+  const [rowsPerPageTable, setRowsPerPageTable] = useState(10);
   const [currentPageTable, setCurrentPageTable] = useState(0);
+  const [rowsPerPageOrderState, setRowsPerPageOrderState] = useState(10);
   const [currentPageOrderState, setCurrentPageOrderState] = useState(0);
+  const [rowsPerPageOrder, setRowsPerPageOrder] = useState(10);
   const [currentPageOrder, setCurrentPageOrder] = useState(0);
 
+  const handleRowsPerPageTable = (newRowsPerPage) => {
+    setRowsPerPageTable(newRowsPerPage);
+  };
   const handlePageChangeTable = (pageNumber) => {
     setCurrentPageTable(pageNumber);
   };
 
+  const handleRowsPerPageOrderState = (newRowsPerPage) => {
+    setRowsPerPageOrderState(newRowsPerPage);
+  };
   const handlePageChangeOrderState = (pageNumber) => {
     setCurrentPageOrderState(pageNumber);
   };
 
+  const handleRowsPerPageOrder = (newRowsPerPage) => {
+    setRowsPerPageOrder(newRowsPerPage);
+  };
   const handlePageChangeOrder = (pageNumber) => {
     setCurrentPageOrder(pageNumber);
   };
@@ -59,7 +87,7 @@ const Order = () => {
     navigate("/orderDetail");
   };
 
-  const dateFormat = (dateStr, format = "YYYY-MM-DD HH:mm") => {
+  const dateFormat = (dateStr, format = "HH:mm") => {
     const dateObj = new Date(dateStr);
     const parts = {
       YYYY: dateObj.getFullYear(),
@@ -153,305 +181,411 @@ const Order = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchAllTableState(currentPageTable));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPageTable]);
+    dispatch(fetchAllTableState(currentPageTable, rowsPerPageTable));
+  }, [currentPageTable, dispatch, rowsPerPageTable]);
 
   useEffect(() => {
-    dispatch(fetchAllOrderState(currentPageOrderState));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPageOrderState]);
+    dispatch(fetchAllOrderState(currentPageOrderState, rowsPerPageOrderState));
+  }, [currentPageOrderState, dispatch, rowsPerPageOrderState]);
 
   useEffect(() => {
-    dispatch(fetchAllOrder(currentPageOrder));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPageOrder]);
+    dispatch(fetchAllOrder(currentPageOrder, rowsPerPageOrder));
+  }, [currentPageOrder, dispatch, rowsPerPageOrder]);
 
   return (
     <>
-      <Container>
-        <h3 className="my-3">Creazione nuovo ordine</h3>
-        <h4>Seleziona tavolo:</h4>
-        <Table
-          striped
-          bordered
-          hover
-          className="text-center mb-3"
-          responsive="sm"
+      <Box sx={{ height: "calc(100vh - 4rem)", overflow: "auto" }}>
+        <Container
+          maxWidth="lg"
+          sx={{
+            paddingBlock: "1rem",
+          }}
         >
-          <thead>
-            <tr>
-              <th>Numero tavolo</th>
-              <th>Massima capacità</th>
-              <th>Persone correnti</th>
-              <th>Stato ordine</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tables.content &&
-              tables.content.map((table) => {
-                if (table.state === "AVAILABLE") {
-                  return (
-                    <tr
-                      key={table.id}
-                      onClick={() => {
-                        handleCreateOrder(table.id);
-                        setCreateTable({
-                          number: table.number,
-                          maxCapacity: table.maxCapacity,
-                          currentPeople: table.currentPeople,
-                          tableId: table.id,
-                        });
-                        setShowModal2(true);
-                      }}
-                    >
-                      <td>{table.number}</td>
-                      <td>{table.maxCapacity}</td>
-                      <td>{table.currentPeople}</td>
-                      <td>{table.state}</td>
-                    </tr>
-                  );
-                }
-              })}
-          </tbody>
-        </Table>
-        {tables.page && tables.page.totalPages > 1 && (
-          <CustomPagination
-            totalPages={tables.page ? tables.page.totalPages : 0}
-            currentPage={currentPageTable}
-            onPageChange={handlePageChangeTable}
-          />
-        )}
-        <Button className="mb-3 d-block" onClick={() => handleShowTable()}>
-          Modifica ordini in corso
-        </Button>
-        {showTable && (
-          <>
-            <Table
-              striped
-              bordered
-              hover
-              variant="secondary"
-              className="text-center"
-              responsive="sm"
-            >
-              <thead>
-                <tr>
-                  <th>Tavolo associato</th>
-                  <th>Data</th>
-                  <th>Stato</th>
-                  <th>Prezzo totale</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orderByState.content &&
-                  orderByState.content.map((order) => (
-                    <tr
-                      key={order.id}
-                      onClick={() => {
-                        setSelectedOrder(order);
-                        dispatch(setId(order.id));
-                        localStorage.setItem("orderId", order.id);
-                        setShowModal(true);
-                      }}
-                    >
-                      <td>{order.table.number}</td>
-                      <td>{dateFormat(order.date)}</td>
-                      <td>{order.state}</td>
-                      <td>{formatPrice(sumPrices(order))}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </Table>
-            {orderByState.page && orderByState.page.totalPages > 1 && (
-              <CustomPagination
-                totalPages={
-                  orderByState.page ? orderByState.page.totalPages : 0
-                }
-                currentPage={currentPageOrderState}
-                onPageChange={handlePageChangeOrderState}
+          <Typography variant="h3" color={theme.palette.secondary.light}>
+            Creazione nuovo ordine
+          </Typography>
+          <Typography variant="h4" color={theme.palette.secondary.light}>
+            Seleziona tavolo:
+          </Typography>
+          <TablePaper>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Numero tavolo
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Massima capacità
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Persone correnti
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Stato ordine
+                      </Typography>
+                    </StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {tables.content &&
+                    tables.content.map((table) => (
+                      <TableRow
+                        key={table.id}
+                        onClick={() => {
+                          handleCreateOrder(table.id);
+                          setCreateTable({
+                            number: table.number,
+                            maxCapacity: table.maxCapacity,
+                            currentPeople: table.currentPeople,
+                            tableId: table.id,
+                          });
+                          setShowModal2(true);
+                        }}
+                        hover
+                      >
+                        <StyledTableCell align="center">
+                          <Typography>{table.number}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Typography>{table.maxCapacity}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Typography>{table.currentPeople}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Typography>{table.state}</Typography>
+                        </StyledTableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {tables.page && tables.page.totalElements > 1 && (
+              <CustomTablePagination
+                totalPages={tables.page.totalElements}
+                currentPage={currentPageTable}
+                onPageChange={handlePageChangeTable}
+                rowsPerPage={rowsPerPageTable}
+                onRowsPerPageChange={handleRowsPerPageTable}
               />
             )}
-          </>
-        )}
-        <Button className="mb-3" onClick={() => setShowTable2(!showTable2)}>
-          Visualizza storico ordini
-        </Button>
-        {showTable2 && (
-          <>
-            <h4>Ordini totali: {data.page && data.page.totalElements}</h4>
-            <Table
-              striped
-              bordered
-              hover
-              variant="dark"
-              className="text-center"
-              responsive="sm"
-            >
-              <thead>
-                <tr>
-                  <th>Tavolo associato</th>
-                  <th>Data</th>
-                  <th>Stato</th>
-                  <th>Prezzo totale</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.content &&
-                  data.content.map((order) => (
-                    <tr key={order.id}>
-                      <td>{order.table.number}</td>
-                      <td>{dateFormat(order.date)}</td>
-                      <td>{order.state}</td>
-                      <td>{formatPrice(sumPrices(order))}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </Table>
-            {data.page && data.page.totalPages > 1 && (
-              <CustomPagination
-                totalPages={data.page ? data.page.totalPages : 0}
-                currentPage={currentPageOrder}
-                onPageChange={handlePageChangeOrder}
-              />
-            )}
-          </>
-        )}
-      </Container>
-
-      <Modal
-        show={showModal2}
-        onHide={handleCloseModal}
-        backdrop="static"
-        keyboard={false}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Modifica tavolo</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="number">
-              <Form.Label>Numero</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Inserisci un numero"
-                min="1"
-                step="1"
-                value={createTable.number}
-                readOnly
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="maxCapacity">
-              <Form.Label>Capacità massima</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Inserisci un numero"
-                min="1"
-                step="1"
-                value={createTable.maxCapacity}
-                onChange={handleChangeCreateTable}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="currentPeople">
-              <Form.Label>Persone attuali</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Inserisci un numero"
-                min="1"
-                step="1"
-                value={createTable.currentPeople}
-                onChange={handleChangeCreateTable}
-                autoFocus
-              />
-            </Form.Group>
-          </Form>
-          {showBtnUpdate && (
-            <div className="text-center">
-              <Button variant="outline-primary" onClick={handleSaveChanges}>
-                Modifica
-              </Button>
-            </div>
+          </TablePaper>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => handleShowTable()}
+            sx={{ marginBlockEnd: 1 }}
+          >
+            <Typography>Modifica ordini in corso</Typography>
+          </Button>
+          {showTable && (
+            <TablePaper>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell align="center">
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Tavolo associato
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Data
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Stato
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Prezzo totale
+                        </Typography>
+                      </StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {orderByState.content &&
+                      orderByState.content.map((order) => (
+                        <TableRow
+                          key={order.id}
+                          onClick={() => {
+                            setSelectedOrder(order);
+                            dispatch(setId(order.id));
+                            localStorage.setItem("orderId", order.id);
+                            setShowModal(true);
+                          }}
+                          hover
+                        >
+                          <StyledTableCell align="center">
+                            <Typography>{order.table.number}</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>{dateFormat(order.date)}</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>{order.state}</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>
+                              {formatPrice(sumPrices(order))}
+                            </Typography>
+                          </StyledTableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              {orderByState.page && orderByState.page.totalElements > 1 && (
+                <CustomTablePagination
+                  totalPages={orderByState.page.totalElements}
+                  currentPage={currentPageOrderState}
+                  onPageChange={handlePageChangeOrderState}
+                  rowsPerPage={rowsPerPageOrderState}
+                  onRowsPerPageChange={handleRowsPerPageOrderState}
+                />
+              )}
+            </TablePaper>
           )}
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="fs-5 fw-medium">Passa a visualizzazione cliente:</div>
-          <div>
-            <Button
-              variant="secondary"
-              className="me-2"
-              onClick={() => setShowModal2(false)}
-            >
-              Chiudi
-            </Button>
-            <Button variant="primary" onClick={() => navigate("/menu")}>
-              <MdMenuBook />
-            </Button>
-          </div>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal
-        show={showModal}
-        onHide={() => {
-          setShowModal(false), setStateValue();
-        }}
-        dialogClassName="custom-modal2"
-        animation={false}
-        centered
+          <Button
+            variant="contained"
+            sx={{
+              marginBlock: 1,
+              display: "block",
+              backgroundColor: theme.palette.primary.light,
+              ":hover": {
+                backgroundColor: theme.palette.primary.main,
+              },
+            }}
+            onClick={() => setShowTable2(!showTable2)}
+          >
+            <Typography>Visualizza storico ordini</Typography>
+          </Button>
+          {showTable2 && (
+            <TablePaper>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <StyledDarkTableCell align="center">
+                        <Typography variant="h6">Tavolo associato</Typography>
+                      </StyledDarkTableCell>
+                      <StyledDarkTableCell align="center">
+                        <Typography variant="h6">Data</Typography>
+                      </StyledDarkTableCell>
+                      <StyledDarkTableCell align="center">
+                        <Typography variant="h6">Stato</Typography>
+                      </StyledDarkTableCell>
+                      <StyledDarkTableCell align="center">
+                        <Typography variant="h6">Prezzo totale</Typography>
+                      </StyledDarkTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data.content &&
+                      data.content.map((order) => (
+                        <TableRow key={order.id}>
+                          <StyledDarkTableCell align="center">
+                            <Typography>{order.table.number}</Typography>
+                          </StyledDarkTableCell>
+                          <StyledDarkTableCell align="center">
+                            <Typography>
+                              {dateFormat(order.date, "DD.MM.YYYY - HH:mm")}
+                            </Typography>
+                          </StyledDarkTableCell>
+                          <StyledDarkTableCell align="center">
+                            <Typography>{order.state}</Typography>
+                          </StyledDarkTableCell>
+                          <StyledDarkTableCell align="center">
+                            <Typography>
+                              {formatPrice(sumPrices(order))}
+                            </Typography>
+                          </StyledDarkTableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              {data.page && data.page.totalElements > 1 && (
+                <CustomTablePagination
+                  totalPages={data.page.totalElements}
+                  currentPage={currentPageOrder}
+                  onPageChange={handlePageChangeOrder}
+                  rowsPerPage={rowsPerPageOrder}
+                  onRowsPerPageChange={handleRowsPerPageOrder}
+                  styledColor="true"
+                  sx={{
+                    backgroundColor: theme.palette.common.darkOrange,
+                    color: theme.palette.common.contrast,
+                  }}
+                />
+              )}
+            </TablePaper>
+          )}
+        </Container>
+      </Box>
+      <Dialog
+        open={showModal2}
+        onClose={handleCloseModal}
+        fullWidth
+        maxWidth="sm"
+        disableEscapeKeyDown
       >
-        <Modal.Header closeButton>
-          <Modal.Title>Ordine</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="d-md-flex justify-content-center column-gap-3 mt-2">
-          <div className="align-self-center">Seleziona nuovo stato: </div>
-          <ButtonGroup>
-            {getState.map((state, idx) => (
-              <ToggleButton
-                key={idx}
-                id={`state-${idx}`}
-                type="radio"
-                variant="outline-primary"
-                value={state.value}
-                checked={stateValue === state.value}
-                onChange={(e) => {
-                  setStateValue(e.currentTarget.value);
-                }}
-              >
-                {state.name}
-              </ToggleButton>
-            ))}
-          </ButtonGroup>
-        </Modal.Body>
-        <Modal.Body className="d-md-flex justify-content-end">
+        <DialogTitle variant="h5">Modifica tavolo</DialogTitle>
+        <DialogContent dividers>
+          <TextField
+            margin="dense"
+            id="number"
+            label="Numero"
+            type="number"
+            fullWidth
+            value={createTable.number}
+            placeholder="Inserisci un numero"
+            InputLabelProps={{ shrink: true }}
+            inputProps={{ min: 1, step: 1 }}
+            readOnly
+          />
+          <TextField
+            margin="dense"
+            id="maxCapacity"
+            label="Capacità massima"
+            type="number"
+            fullWidth
+            value={createTable.maxCapacity}
+            onChange={handleChangeCreateTable}
+            placeholder="Inserisci un numero"
+            inputProps={{ min: 1, step: 1 }}
+          />
+          <TextField
+            margin="dense"
+            id="currentPeople"
+            label="Persone attuali"
+            type="number"
+            fullWidth
+            value={createTable.currentPeople}
+            onChange={handleChangeCreateTable}
+            placeholder="Inserisci un numero"
+            inputProps={{ min: 1, step: 1 }}
+            autoFocus
+          />
+        </DialogContent>
+        <DialogActions>
+          <Typography variant="primary">
+            Passa a visualizzazione cliente:
+          </Typography>
+          <Button onClick={() => setShowModal2(false)} color="primary">
+            Chiudi
+          </Button>
+          {showBtnUpdate && (
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleSaveChanges}
+            >
+              Modifica
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate("/menu")}
+          >
+            <MdMenuBook size={24} />
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setStateValue();
+        }}
+        fullWidth
+        maxWidth="sm"
+        disableEscapeKeyDown
+        scroll="paper"
+      >
+        <DialogTitle variant="h5">Ordine</DialogTitle>
+        <DialogContent dividers>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            gap={3}
+            marginBlock={1}
+          >
+            <Typography variant="subtitle1" component="div">
+              Seleziona nuovo stato:
+            </Typography>
+            <ModalToggleButtonGroup
+              value={stateValue}
+              exclusive
+              onChange={(e, newValue) => {
+                setStateValue(newValue);
+              }}
+              color="primary"
+            >
+              {getState.map((state, idx) => (
+                <ToggleButton key={idx} value={state.value}>
+                  {state.name}
+                </ToggleButton>
+              ))}
+            </ModalToggleButtonGroup>
+          </Box>
+        </DialogContent>
+        {selectedOrder && selectedOrder.orderDetails.length > 0 && (
+          <DialogActions
+            sx={{
+              paddingBlockStart: 1,
+              borderBlockEnd: "1px solid",
+              borderColor: theme.palette.common.lightGray,
+            }}
+          >
+            <Typography variant="primary">
+              Visualizza dettagli ordine
+            </Typography>
+            <Button onClick={handleToOrderDetail}>
+              <CiStar size={24} />
+            </Button>
+          </DialogActions>
+        )}
+        <DialogActions sx={{ paddingBlockStart: 2 }}>
+          <Typography variant="primary">
+            Passa a visualizzazione CLIENTE:
+          </Typography>
           {stateValue && (
             <Button
-              variant="outline-warning"
+              variant="outlined"
+              color="error"
               onClick={() => {
-                changeState(), setShowModal(false), setStateValue();
+                changeState();
+                setShowModal(false);
+                setStateValue();
               }}
             >
               Modifica
             </Button>
           )}
-        </Modal.Body>
-        {selectedOrder && selectedOrder.orderDetails.length > 0 && (
-          <Modal.Footer>
-            <h6 className="m-0 me-2 align-self-center">
-              Visualizza dettagli ordine
-            </h6>
-            <Button onClick={handleToOrderDetail}>
-              <CiStar />
-            </Button>
-          </Modal.Footer>
-        )}
-        <Modal.Footer>
-          <h6>Passa a visuallizzazione CLIENTE:</h6>
-          <Button onClick={() => navigate("/menu")}>
-            <MdMenuBook />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate("/menu")}
+            disableElevation
+          >
+            <MdMenuBook size={24} />
           </Button>
-        </Modal.Footer>
-      </Modal>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

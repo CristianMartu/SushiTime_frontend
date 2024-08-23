@@ -248,11 +248,11 @@ export const getAllOrderState = (payload) => ({
   payload,
 });
 
-export const fetchAllOrder = (page = 0) => {
+export const fetchAllOrder = (page = 0, rows = 10) => {
   return async (dispatch, getState) => {
     console.log("fetchAllOrder", getState());
     try {
-      const response = await fetch(URL_ALL_ORDER + page, {
+      const response = await fetch(URL_ALL_ORDER + page + "&size=" + rows, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -272,16 +272,19 @@ export const fetchAllOrder = (page = 0) => {
   };
 };
 
-export const fetchAllOrderState = (page = 0) => {
+export const fetchAllOrderState = (page = 0, rows = 10) => {
   return async (dispatch, getState) => {
     console.log("fetchAllOrderState", getState());
     try {
-      const response = await fetch(URL_ALL_ORDER_STATE + page, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        URL_ALL_ORDER_STATE + page + "&size=" + rows,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -358,8 +361,8 @@ export const fetchChangeStateOrder = (payload, orderId) => {
 };
 
 // GET ALL TABLE
-export const URL_ALL_TABLE = `${urlBase}/tables?size=15&page=`;
-export const URL_ALL_TABLE_STATE = `${urlBase}/tables/state?size=15&page=`;
+export const URL_ALL_TABLE = `${urlBase}/tables?page=`;
+export const URL_ALL_TABLE_STATE = `${urlBase}/tables/state?page=`;
 export const GET_ALL_TABLE = "GET_ALL_TABLE";
 export const GET_ALL_TABLE_STATE = "GET_ALL_TABLE_STATE";
 
@@ -369,11 +372,11 @@ export const getAllTableState = (payload) => ({
   payload,
 });
 
-export const fetchAllTable = (page = 0) => {
+export const fetchAllTable = (page = 0, rows = 10) => {
   return async (dispatch, getState) => {
     console.log("fetchAllTable", getState());
     try {
-      const response = await fetch(URL_ALL_TABLE + page, {
+      const response = await fetch(URL_ALL_TABLE + page + "&size=" + rows, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -393,16 +396,19 @@ export const fetchAllTable = (page = 0) => {
   };
 };
 
-export const fetchAllTableState = (page = 0) => {
+export const fetchAllTableState = (page = 0, rows = 10) => {
   return async (dispatch, getState) => {
     console.log("fetchAllTableState", getState());
     try {
-      const response = await fetch(URL_ALL_TABLE_STATE + page, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        URL_ALL_TABLE_STATE + page + "&size=" + rows,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -521,16 +527,16 @@ export const fetchDeleteTable = (tableId) => {
 };
 
 // GET ALL PRODUCT
-export const URL_ALL_PRODUCT = `${urlBase}/products?size=20&sortBy=number&page=`;
+export const URL_ALL_PRODUCT = `${urlBase}/products?sortBy=number&page=`;
 export const GET_ALL_PRODUCT = "GET_ALL_PRODUCT";
 
 export const getAllProduct = (payload) => ({ type: GET_ALL_PRODUCT, payload });
 
-export const fetchAllProduct = (page = 0) => {
+export const fetchAllProduct = (page = 0, rows = 10) => {
   return async (dispatch, getState) => {
     console.log("fetchAllProduct", getState());
     try {
-      const response = await fetch(URL_ALL_PRODUCT + page, {
+      const response = await fetch(URL_ALL_PRODUCT + page + "&size=" + rows, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

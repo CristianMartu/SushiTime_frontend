@@ -67,7 +67,7 @@ const Exit = () => {
           <InputBase
             defaultValue={order.table ? order.table.number : 0}
             id="table-number-input"
-            readOnly
+            disabled
             sx={{
               "label + &": {
                 marginTop: theme.spacing(4),

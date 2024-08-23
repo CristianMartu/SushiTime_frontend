@@ -196,12 +196,31 @@ export const StyledTableCell = styled((props) => (
     backgroundColor: theme.palette.background.dark,
     color: theme.palette.common.primary,
     border: 0,
+    // borderRight: "2px solid white",
   },
   [`&.${tableCellClasses.body}`]: {
     borderColor: theme.palette.background.dark,
   },
 }));
 
+export const StyledDarkTableCell = styled((props) => (
+  <TableCell size="small" {...props} />
+))(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    // backgroundColor: theme.palette.common.darkOrange,
+    backgroundColor: "#2e6a71",
+    color: theme.palette.common.contrast,
+    border: 0,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    // borderColor: theme.palette.common.darkOrange,
+    borderColor: "#2e6a71",
+    // backgroundColor: "#ee9b009c", attuale
+
+    backgroundColor: "#aad0d7",
+  },
+}));
+// 76b3b9   aad0d7
 export const StyledTablePagination = styled(TablePagination)(({ theme }) => ({
   backgroundColor: theme.palette.background.dark,
   color: theme.palette.common.primary,
