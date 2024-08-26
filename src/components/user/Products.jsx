@@ -79,7 +79,7 @@ const Products = ({ categoryName }) => {
   const isSaved = (id) =>
     saveAddProduct.findIndex((product) => product.id === id) !== -1;
 
-  const validCategories = ["BEVANDE", "DOLCI", "BIRRE"];
+  const validCategories = ["BEVANDE", "DOLCI", "BIRRE", "VINI"];
 
   const getProductPrice = (name, price) => {
     if (validCategories.includes(name)) {

@@ -125,69 +125,69 @@ const MyTable = () => {
           >
             <Typography variant="h6">Aggiungi tavolo</Typography>
           </Button>
-          <TablePaper>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell align="center">
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Numero tavolo
-                      </Typography>
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Massima capacità
-                      </Typography>
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Persone correnti
-                      </Typography>
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Stato
-                      </Typography>
-                    </StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {data.content &&
-                    data.content.map((table) => (
-                      <TableRow
-                        key={table.id}
-                        onClick={() => {
-                          setCreateTable({
-                            number: table.number,
-                            maxCapacity: table.maxCapacity,
-                            currentPeople: table.currentPeople,
-                            tableId: table.id,
-                            state: table.state,
-                          });
-                          setShowModal(true);
-                          setShowModalUpdate(true);
-                        }}
-                        hover
-                      >
-                        <StyledTableCell align="center">
-                          <Typography>{table.number}</Typography>
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Typography>{table.maxCapacity}</Typography>
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Typography>{table.currentPeople}</Typography>
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Typography>{table.state}</Typography>
-                        </StyledTableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            {data.page && data.page.totalElements > 1 && (
+          {data.page && data.page.totalElements > 0 && (
+            <TablePaper>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell align="center">
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Numero tavolo
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Massima capacità
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Persone correnti
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                          Stato
+                        </Typography>
+                      </StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data.content &&
+                      data.content.map((table) => (
+                        <TableRow
+                          key={table.id}
+                          onClick={() => {
+                            setCreateTable({
+                              number: table.number,
+                              maxCapacity: table.maxCapacity,
+                              currentPeople: table.currentPeople,
+                              tableId: table.id,
+                              state: table.state,
+                            });
+                            setShowModal(true);
+                            setShowModalUpdate(true);
+                          }}
+                          hover
+                        >
+                          <StyledTableCell align="center">
+                            <Typography>{table.number}</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>{table.maxCapacity}</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>{table.currentPeople}</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>{table.state}</Typography>
+                          </StyledTableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
               <CustomTablePagination
                 totalPages={data.page.totalElements}
                 currentPage={currentPage}
@@ -195,8 +195,8 @@ const MyTable = () => {
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleRowsPerPageChange}
               />
-            )}
-          </TablePaper>
+            </TablePaper>
+          )}
         </Container>
       </Box>
 

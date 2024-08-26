@@ -664,12 +664,11 @@ export const URL_CURRENT_USER = `${urlBase}/users/profile`;
 export const fetchCurrentUser = () => {
   return async (dispatch, getState) => {
     console.log("fetchCurrentUser", getState());
-    // const t = localStorage.getItem("authToken");
     try {
       const response = await fetch(URL_CURRENT_USER, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       });
 

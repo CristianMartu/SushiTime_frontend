@@ -124,79 +124,79 @@ const Product = () => {
         >
           <Typography variant="h6">Aggiungi prodotto</Typography>
         </Button>
-        <TablePaper>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell align="center">
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      Numero
-                    </Typography>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      Nome
-                    </Typography>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      Descrizione
-                    </Typography>
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      Prezzo
-                    </Typography>
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      Categoria
-                    </Typography>
-                  </StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.content &&
-                  data.content.map((product) => (
-                    <TableRow
-                      key={product.id}
-                      onClick={() => {
-                        setAttProductView({
-                          name: product.name,
-                          description: product.description,
-                          price: product.price,
-                          image: product.image,
-                          number: product.number,
-                          category: product.category.name,
-                          id: product.id,
-                        });
-                        setShowModal(true);
-                        setShowModalUpdate(true);
-                      }}
-                      hover
-                    >
-                      <StyledTableCell align="center">
-                        <Typography>{product.number}</Typography>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Typography>{product.name}</Typography>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Typography>{product.description}</Typography>
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Typography>{product.price} &euro;</Typography>
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Typography>{product.category.name}</Typography>
-                      </StyledTableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {data.page && data.page.totalElements > 1 && (
+        {data.page && data.page.totalElements > 0 && (
+          <TablePaper>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Numero
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Nome
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Descrizione
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Prezzo
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Categoria
+                      </Typography>
+                    </StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.content &&
+                    data.content.map((product) => (
+                      <TableRow
+                        key={product.id}
+                        onClick={() => {
+                          setAttProductView({
+                            name: product.name,
+                            description: product.description,
+                            price: product.price,
+                            image: product.image,
+                            number: product.number,
+                            category: product.category.name,
+                            id: product.id,
+                          });
+                          setShowModal(true);
+                          setShowModalUpdate(true);
+                        }}
+                        hover
+                      >
+                        <StyledTableCell align="center">
+                          <Typography>{product.number}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          <Typography>{product.name}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          <Typography>{product.description}</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Typography>{product.price} &euro;</Typography>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Typography>{product.category.name}</Typography>
+                        </StyledTableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
             <CustomTablePagination
               totalPages={data.page.totalElements}
               currentPage={currentPage}
@@ -204,8 +204,8 @@ const Product = () => {
               rowsPerPage={rowsPerPage}
               onRowsPerPageChange={handleRowsPerPageChange}
             />
-          )}
-        </TablePaper>
+          </TablePaper>
+        )}
       </Container>
 
       <Dialog

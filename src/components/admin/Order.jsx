@@ -201,236 +201,262 @@ const Order = () => {
             paddingBlock: "1rem",
           }}
         >
-          <Typography variant="h3" color={theme.palette.secondary.light}>
-            Creazione nuovo ordine
-          </Typography>
-          <Typography variant="h4" color={theme.palette.secondary.light}>
-            Seleziona tavolo:
-          </Typography>
-          <TablePaper>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell>
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Numero tavolo
-                      </Typography>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Massima capacità
-                      </Typography>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Persone correnti
-                      </Typography>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Stato ordine
-                      </Typography>
-                    </StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {tables.content &&
-                    tables.content.map((table) => (
-                      <TableRow
-                        key={table.id}
-                        onClick={() => {
-                          handleCreateOrder(table.id);
-                          setCreateTable({
-                            number: table.number,
-                            maxCapacity: table.maxCapacity,
-                            currentPeople: table.currentPeople,
-                            tableId: table.id,
-                          });
-                          setShowModal2(true);
-                        }}
-                        hover
-                      >
-                        <StyledTableCell align="center">
-                          <Typography>{table.number}</Typography>
+          {tables.page && tables.page.totalElements > 0 ? (
+            <>
+              <Typography variant="h3" color={theme.palette.secondary.light}>
+                Creazione nuovo ordine
+              </Typography>
+              <Typography variant="h4" color={theme.palette.secondary.light}>
+                Seleziona tavolo:
+              </Typography>
+              <TablePaper>
+                <TableContainer>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <StyledTableCell>
+                          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                            Numero tavolo
+                          </Typography>
                         </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Typography>{table.maxCapacity}</Typography>
+                        <StyledTableCell>
+                          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                            Massima capacità
+                          </Typography>
                         </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Typography>{table.currentPeople}</Typography>
+                        <StyledTableCell>
+                          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                            Persone correnti
+                          </Typography>
                         </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Typography>{table.state}</Typography>
+                        <StyledTableCell>
+                          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                            Stato ordine
+                          </Typography>
                         </StyledTableCell>
                       </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            {tables.page && tables.page.totalElements > 1 && (
-              <CustomTablePagination
-                totalPages={tables.page.totalElements}
-                currentPage={currentPageTable}
-                onPageChange={handlePageChangeTable}
-                rowsPerPage={rowsPerPageTable}
-                onRowsPerPageChange={handleRowsPerPageTable}
-              />
-            )}
-          </TablePaper>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => handleShowTable()}
-            sx={{ marginBlockEnd: 1 }}
-          >
-            <Typography>Modifica ordini in corso</Typography>
-          </Button>
-          {showTable && (
-            <TablePaper>
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <StyledTableCell align="center">
-                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                          Tavolo associato
-                        </Typography>
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                          Data
-                        </Typography>
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                          Stato
-                        </Typography>
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                          Prezzo totale
-                        </Typography>
-                      </StyledTableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {orderByState.content &&
-                      orderByState.content.map((order) => (
-                        <TableRow
-                          key={order.id}
-                          onClick={() => {
-                            setSelectedOrder(order);
-                            dispatch(setId(order.id));
-                            localStorage.setItem("orderId", order.id);
-                            setShowModal(true);
-                          }}
-                          hover
-                        >
-                          <StyledTableCell align="center">
-                            <Typography>{order.table.number}</Typography>
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            <Typography>{dateFormat(order.date)}</Typography>
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            <Typography>{order.state}</Typography>
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            <Typography>
-                              {formatPrice(sumPrices(order))}
-                            </Typography>
-                          </StyledTableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              {orderByState.page && orderByState.page.totalElements > 1 && (
+                    </TableHead>
+                    <TableBody>
+                      {tables.content &&
+                        tables.content.map((table) => (
+                          <TableRow
+                            key={table.id}
+                            onClick={() => {
+                              handleCreateOrder(table.id);
+                              setCreateTable({
+                                number: table.number,
+                                maxCapacity: table.maxCapacity,
+                                currentPeople: table.currentPeople,
+                                tableId: table.id,
+                              });
+                              setShowModal2(true);
+                            }}
+                            hover
+                          >
+                            <StyledTableCell align="center">
+                              <Typography>{table.number}</Typography>
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              <Typography>{table.maxCapacity}</Typography>
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              <Typography>{table.currentPeople}</Typography>
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              <Typography>{table.state}</Typography>
+                            </StyledTableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
                 <CustomTablePagination
-                  totalPages={orderByState.page.totalElements}
-                  currentPage={currentPageOrderState}
-                  onPageChange={handlePageChangeOrderState}
-                  rowsPerPage={rowsPerPageOrderState}
-                  onRowsPerPageChange={handleRowsPerPageOrderState}
+                  totalPages={tables.page.totalElements}
+                  currentPage={currentPageTable}
+                  onPageChange={handlePageChangeTable}
+                  rowsPerPage={rowsPerPageTable}
+                  onRowsPerPageChange={handleRowsPerPageTable}
                 />
-              )}
-            </TablePaper>
+              </TablePaper>
+            </>
+          ) : (
+            <Typography variant="h3" color={theme.palette.secondary.light}>
+              Nessun tavolo disponibile
+            </Typography>
           )}
-          <Button
-            variant="contained"
-            sx={{
-              marginBlock: 1,
-              display: "block",
-              backgroundColor: theme.palette.primary.light,
-              ":hover": {
-                backgroundColor: theme.palette.primary.main,
-              },
-            }}
-            onClick={() => setShowTable2(!showTable2)}
-          >
-            <Typography>Visualizza storico ordini</Typography>
-          </Button>
-          {showTable2 && (
-            <TablePaper>
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <StyledDarkTableCell align="center">
-                        <Typography variant="h6">Tavolo associato</Typography>
-                      </StyledDarkTableCell>
-                      <StyledDarkTableCell align="center">
-                        <Typography variant="h6">Data</Typography>
-                      </StyledDarkTableCell>
-                      <StyledDarkTableCell align="center">
-                        <Typography variant="h6">Stato</Typography>
-                      </StyledDarkTableCell>
-                      <StyledDarkTableCell align="center">
-                        <Typography variant="h6">Prezzo totale</Typography>
-                      </StyledDarkTableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.content &&
-                      data.content.map((order) => (
-                        <TableRow key={order.id}>
+          {orderByState.page && orderByState.page.totalElements > 0 && (
+            <>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleShowTable()}
+                sx={{ marginBlockEnd: 1 }}
+              >
+                <Typography>Modifica ordini in corso</Typography>
+              </Button>
+              {showTable && (
+                <TablePaper>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <StyledTableCell align="center">
+                            <Typography
+                              variant="h6"
+                              sx={{ fontWeight: "bold" }}
+                            >
+                              Tavolo associato
+                            </Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography
+                              variant="h6"
+                              sx={{ fontWeight: "bold" }}
+                            >
+                              Data
+                            </Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography
+                              variant="h6"
+                              sx={{ fontWeight: "bold" }}
+                            >
+                              Stato
+                            </Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography
+                              variant="h6"
+                              sx={{ fontWeight: "bold" }}
+                            >
+                              Prezzo totale
+                            </Typography>
+                          </StyledTableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {orderByState.content &&
+                          orderByState.content.map((order) => (
+                            <TableRow
+                              key={order.id}
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                dispatch(setId(order.id));
+                                localStorage.setItem("orderId", order.id);
+                                setShowModal(true);
+                              }}
+                              hover
+                            >
+                              <StyledTableCell align="center">
+                                <Typography>{order.table.number}</Typography>
+                              </StyledTableCell>
+                              <StyledTableCell align="center">
+                                <Typography>
+                                  {dateFormat(order.date)}
+                                </Typography>
+                              </StyledTableCell>
+                              <StyledTableCell align="center">
+                                <Typography>{order.state}</Typography>
+                              </StyledTableCell>
+                              <StyledTableCell align="center">
+                                <Typography>
+                                  {formatPrice(sumPrices(order))}
+                                </Typography>
+                              </StyledTableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <CustomTablePagination
+                    totalPages={orderByState.page.totalElements}
+                    currentPage={currentPageOrderState}
+                    onPageChange={handlePageChangeOrderState}
+                    rowsPerPage={rowsPerPageOrderState}
+                    onRowsPerPageChange={handleRowsPerPageOrderState}
+                  />
+                </TablePaper>
+              )}
+            </>
+          )}
+          {data.page && data.page.totalElements > 0 && (
+            <>
+              <Button
+                variant="contained"
+                sx={{
+                  marginBlock: 1,
+                  display: "block",
+                  backgroundColor: theme.palette.primary.light,
+                  ":hover": {
+                    backgroundColor: theme.palette.primary.main,
+                  },
+                }}
+                onClick={() => setShowTable2(!showTable2)}
+              >
+                <Typography>Visualizza storico ordini</Typography>
+              </Button>
+              {showTable2 && (
+                <TablePaper>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
                           <StyledDarkTableCell align="center">
-                            <Typography>{order.table.number}</Typography>
-                          </StyledDarkTableCell>
-                          <StyledDarkTableCell align="center">
-                            <Typography>
-                              {dateFormat(order.date, "DD.MM.YYYY - HH:mm")}
+                            <Typography variant="h6">
+                              Tavolo associato
                             </Typography>
                           </StyledDarkTableCell>
                           <StyledDarkTableCell align="center">
-                            <Typography>{order.state}</Typography>
+                            <Typography variant="h6">Data</Typography>
                           </StyledDarkTableCell>
                           <StyledDarkTableCell align="center">
-                            <Typography>
-                              {formatPrice(sumPrices(order))}
-                            </Typography>
+                            <Typography variant="h6">Stato</Typography>
+                          </StyledDarkTableCell>
+                          <StyledDarkTableCell align="center">
+                            <Typography variant="h6">Prezzo totale</Typography>
                           </StyledDarkTableCell>
                         </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              {data.page && data.page.totalElements > 1 && (
-                <CustomTablePagination
-                  totalPages={data.page.totalElements}
-                  currentPage={currentPageOrder}
-                  onPageChange={handlePageChangeOrder}
-                  rowsPerPage={rowsPerPageOrder}
-                  onRowsPerPageChange={handleRowsPerPageOrder}
-                  styledColor="true"
-                  sx={{
-                    backgroundColor: theme.palette.common.darkOrange,
-                    color: theme.palette.common.contrast,
-                  }}
-                />
+                      </TableHead>
+                      <TableBody>
+                        {data.content &&
+                          data.content.map((order) => (
+                            <TableRow key={order.id}>
+                              <StyledDarkTableCell align="center">
+                                <Typography>{order.table.number}</Typography>
+                              </StyledDarkTableCell>
+                              <StyledDarkTableCell align="center">
+                                <Typography>
+                                  {dateFormat(order.date, "DD.MM.YYYY - HH:mm")}
+                                </Typography>
+                              </StyledDarkTableCell>
+                              <StyledDarkTableCell align="center">
+                                <Typography>{order.state}</Typography>
+                              </StyledDarkTableCell>
+                              <StyledDarkTableCell align="center">
+                                <Typography>
+                                  {formatPrice(sumPrices(order))}
+                                </Typography>
+                              </StyledDarkTableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <CustomTablePagination
+                    totalPages={data.page.totalElements}
+                    currentPage={currentPageOrder}
+                    onPageChange={handlePageChangeOrder}
+                    rowsPerPage={rowsPerPageOrder}
+                    onRowsPerPageChange={handleRowsPerPageOrder}
+                    styledColor="true"
+                    sx={{
+                      backgroundColor: theme.palette.common.darkOrange,
+                      color: theme.palette.common.contrast,
+                    }}
+                  />
+                </TablePaper>
               )}
-            </TablePaper>
+            </>
           )}
         </Container>
       </Box>
