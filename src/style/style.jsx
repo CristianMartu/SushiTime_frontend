@@ -149,13 +149,16 @@ export const BootstrapInput = styled(InputBase)(({ theme, error }) => ({
   },
 }));
 
-export const NavbarButton = styled((props) => (
-  <Button disableRipple {...props} />
-))(({ theme }) => ({
-  color: theme.palette.text.light,
+export const NavbarButton = styled(
+  (props) => <Button disableRipple {...props} />,
+  {
+    shouldForwardProp: (prop) => prop !== "active",
+  }
+)(({ theme, active }) => ({
+  color: active ? theme.palette.secondary.main : theme.palette.text.light,
   marginRight: "2.5rem",
   "&:hover": {
-    color: theme.palette.common.white,
+    color: !active && theme.palette.common.white,
   },
 }));
 

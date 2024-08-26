@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { CiStar } from "react-icons/ci";
 import { MdMenuBook } from "react-icons/md";
 import { BsCart } from "react-icons/bs";
@@ -34,6 +34,7 @@ import logo from "./../../assets/logo.png";
 
 const MyNavbar = () => {
   const theme = useTheme();
+  const location = useLocation();
   const dispatch = useDispatch();
   const order = useSelector((state) => state.orderDetail.byOrder);
   const saveProduct = useSelector((state) => state.product.content);
@@ -140,21 +141,20 @@ const MyNavbar = () => {
               <NavbarButton
                 component={Link}
                 to="/menu"
-                color="inherit"
                 startIcon={<MdMenuBook />}
+                active={location.pathname === "/menu"}
               >
                 <Typography variant="body1">MENÙ</Typography>
               </NavbarButton>
               <NavbarButton
                 component={Link}
                 to="/history"
-                color="inherit"
                 startIcon={<CiStar />}
+                active={location.pathname === "/history"}
               >
                 <Typography variant="body1">STORICO</Typography>
               </NavbarButton>
               <IconButton
-                color="inherit"
                 onClick={() => setShow(true)}
                 sx={{
                   backgroundColor: theme.palette.secondary.main,
@@ -175,20 +175,14 @@ const MyNavbar = () => {
                   }}
                 />
               </IconButton>
-              <Button
+              <NavbarButton
                 component={Link}
                 to="/exit"
-                color="inherit"
                 startIcon={<RxExit />}
-                sx={{
-                  color: theme.palette.text.light,
-                  "&:hover": {
-                    color: theme.palette.common.white,
-                  },
-                }}
+                active={location.pathname === "/exit"}
               >
                 <Typography variant="body1">ESCI</Typography>
-              </Button>
+              </NavbarButton>
             </Box>
           </Toolbar>
         </Container>

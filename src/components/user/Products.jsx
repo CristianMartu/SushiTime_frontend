@@ -9,6 +9,11 @@ import {
   IconButton,
   Box,
   alpha,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
 import { FaMinus } from "react-icons/fa";
 import { TiPlus } from "react-icons/ti";
@@ -20,6 +25,19 @@ const Products = ({ categoryName }) => {
   const URL = "http://localhost:3001/products/category?size=50";
 
   const dispatch = useDispatch();
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const handleOpenDialog = (product) => {
+    setSelectedProduct(product);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedProduct(null);
+  };
 
   const payload = {
     name: categoryName,
@@ -76,119 +94,193 @@ const Products = ({ categoryName }) => {
   };
 
   return (
-    <Box
-      sx={{
-        height: "calc(100vh - 4rem)",
-        overflowY: "auto",
-        paddingBlock: "25px",
-      }}
-    >
-      {menu ? (
-        <Grid
-          container
-          rowSpacing={4}
-          justifyContent={"start"}
-          sx={{ paddingInlineStart: "3rem" }}
-        >
-          {menu.content.map((product) => {
-            const selectedProduct = saveAddProduct.filter(
-              (p) => p.id === product.id
-            );
-            const quantity = selectedProduct ? selectedProduct.length : 0;
-            const imageUrl = product.image.startsWith("http")
-              ? product.image
-              : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg";
+    <>
+      <Box
+        sx={{
+          height: "calc(100vh - 4rem)",
+          overflowY: "auto",
+          paddingBlock: "25px",
+        }}
+      >
+        {menu ? (
+          <Grid
+            container
+            rowSpacing={4}
+            justifyContent={"start"}
+            sx={{ paddingInlineStart: "3rem" }}
+          >
+            {menu.content.map((product) => {
+              const selectedProduct = saveAddProduct.filter(
+                (p) => p.id === product.id
+              );
+              const quantity = selectedProduct ? selectedProduct.length : 0;
+              const imageUrl = product.image.startsWith("http")
+                ? product.image
+                : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg";
 
-            return (
-              <Grid item key={product.id} xs="auto">
-                <Card
-                  sx={{
-                    width: "240px",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    borderColor: isSaved(product.id)
-                      ? "common.darkRed"
-                      : "secondary.main",
-                    boxShadow: isSaved(product.id)
-                      ? `${alpha("#9b2226ff", 0.1)} 0px 4px 12px 2px`
-                      : `0px 4px 8px rgba(0, 0, 0, 0.4)`,
-                    backgroundColor: "common.contrast",
-                    borderWidth: 2,
-                    borderStyle: "solid",
-                    borderRadius: "16px",
-                    overflow: "hidden",
-                    marginInlineStart: "20px",
-                  }}
-                >
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography
-                      variant="h5"
-                      gutterBottom
-                      sx={{ fontWeight: "bold" }}
-                    >
-                      {product.number} - {product.name}
-                    </Typography>
-                    <Typography variant="body1">
-                      {product.description}
-                    </Typography>
-                    <Typography
-                      variant="h6"
-                      color={(theme) => theme.palette.common.darkRed}
-                      sx={{ mt: "auto", fontWeight: "bold" }}
-                    >
-                      {getProductPrice(product.category.name, product.price)}
-                    </Typography>
-                  </CardContent>
-                  <CardMedia
-                    component="img"
-                    image={imageUrl}
-                    alt={product.name}
-                    sx={{ height: 140, objectFit: "contain" }}
-                  />
-                  <CardActions
+              return (
+                <Grid item key={product.id} xs="auto">
+                  <Card
                     sx={{
-                      justifyContent: "space-between",
-                      padding: "8px 16px",
-                      backgroundColor: isSaved(product.id)
+                      width: "240px",
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      borderColor: isSaved(product.id)
                         ? "common.darkRed"
                         : "secondary.main",
+                      boxShadow: isSaved(product.id)
+                        ? `${alpha("#9b2226ff", 0.1)} 0px 4px 12px 2px`
+                        : `0px 4px 8px rgba(0, 0, 0, 0.4)`,
+                      // backgroundColor: "common.contrast",
+                      backgroundColor: "common.white",
+                      borderWidth: 2,
+                      borderStyle: "solid",
+                      borderRadius: "16px",
+                      overflow: "hidden",
+                      marginInlineStart: "20px",
                     }}
                   >
-                    <IconButton
-                      color="white"
-                      onClick={() => {
-                        if (isSaved(product.id)) {
-                          dispatch(removeProduct(product.id));
-                        }
+                    <CardContent
+                      onClick={() => handleOpenDialog(product)}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        height: "100%",
+                        paddingBlockEnd: 0,
                       }}
                     >
-                      <FaMinus />
-                    </IconButton>
-                    <Typography
-                      variant="h6"
-                      color={isSaved(product.id) ? "common.vanilla" : "white"}
-                    >
-                      {quantity}
-                    </Typography>
-                    <IconButton
-                      color="white"
-                      onClick={() => {
-                        dispatch(addProduct(product));
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", marginBlockEnd: 1 }}
+                      >
+                        {product.number.toString().padStart(3, "0")} -{" "}
+                        {product.name}
+                      </Typography>
+                      <Box>
+                        <Typography variant="body1" noWrap>
+                          {product.description}
+                        </Typography>
+                        <Typography
+                          variant="h6"
+                          color={(theme) => theme.palette.common.darkRed}
+                          sx={{ fontWeight: "bold" }}
+                        >
+                          {getProductPrice(
+                            product.category.name,
+                            product.price
+                          )}
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                    <CardMedia
+                      onClick={() => handleOpenDialog(product)}
+                      component="img"
+                      image={imageUrl}
+                      alt={product.name}
+                      sx={{ height: 140, objectFit: "contain" }}
+                    />
+                    <CardActions
+                      sx={{
+                        justifyContent: "space-between",
+                        padding: "8px 16px",
+                        backgroundColor: isSaved(product.id)
+                          ? "common.darkRed"
+                          : "secondary.main",
                       }}
                     >
-                      <TiPlus />
-                    </IconButton>
-                  </CardActions>
-                </Card>
-              </Grid>
-            );
-          })}
-        </Grid>
-      ) : (
-        <></>
+                      <IconButton
+                        color="white"
+                        onClick={() => {
+                          if (isSaved(product.id)) {
+                            dispatch(removeProduct(product.id));
+                          }
+                        }}
+                      >
+                        <FaMinus />
+                      </IconButton>
+                      <Typography
+                        variant="h6"
+                        color={isSaved(product.id) ? "common.vanilla" : "white"}
+                      >
+                        {quantity}
+                      </Typography>
+                      <IconButton
+                        color="white"
+                        onClick={() => {
+                          dispatch(addProduct(product));
+                        }}
+                      >
+                        <TiPlus />
+                      </IconButton>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              );
+            })}
+          </Grid>
+        ) : (
+          <></>
+        )}
+      </Box>
+      {selectedProduct && (
+        <Dialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+          // fullWidth
+          // maxWidth={"sm"}
+          maxWidth={"xs"}
+        >
+          <DialogTitle sx={{ fontWeight: "bold" }}>
+            {selectedProduct.name}
+          </DialogTitle>
+          <DialogContent
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              width: "350px",
+            }}
+          >
+            <Typography variant="body1" sx={{ marginBottom: 2 }}>
+              {selectedProduct.description}
+            </Typography>
+            <CardMedia
+              component="img"
+              image={
+                selectedProduct.image.startsWith("http")
+                  ? selectedProduct.image
+                  : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg"
+              }
+              alt={selectedProduct.name}
+              sx={{
+                width: "200px",
+                height: "auto",
+                objectFit: "contain",
+              }}
+            />
+            <Typography variant="h6" sx={{ marginTop: 2 }}>
+              Prezzo:{" "}
+              {getProductPrice(
+                selectedProduct.category.name,
+                selectedProduct.price
+              )}
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleCloseDialog}
+              color="secondary"
+              variant="contained"
+            >
+              Chiudi
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
-    </Box>
+    </>
   );
 };
 
