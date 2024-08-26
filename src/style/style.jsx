@@ -43,12 +43,10 @@ export const GlobalScrollbarStyles = () => {
 };
 
 // NAVBAR
-// AppBar personalizzato
 export const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
 }));
 
-// Box personalizzato per il contenuto del Modal
 export const ModalBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   maxWidth: "800px",
@@ -60,7 +58,6 @@ export const ModalBox = styled(Box)(({ theme }) => ({
   // border: "1px solid",
 }));
 
-// ListItem personalizzato per la lista degli ordini
 export const StyledListItem = styled(ListItem)(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.divider}`,
   "&:last-child": {
@@ -171,8 +168,8 @@ export const NavbarToggleButton = styled((props) => (
     color: theme.palette.common.white,
   },
   "&.Mui-selected": {
-    color: theme.palette.primary.main, // Colore per il pulsante selezionato
-    backgroundColor: theme.palette.background.default, // Background del pulsante selezionato
+    color: theme.palette.primary.main,
+    backgroundColor: theme.palette.background.default,
   },
 }));
 
@@ -207,20 +204,16 @@ export const StyledDarkTableCell = styled((props) => (
   <TableCell size="small" {...props} />
 ))(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    // backgroundColor: theme.palette.common.darkOrange,
     backgroundColor: "#2e6a71",
     color: theme.palette.common.contrast,
     border: 0,
   },
   [`&.${tableCellClasses.body}`]: {
-    // borderColor: theme.palette.common.darkOrange,
     borderColor: "#2e6a71",
-    // backgroundColor: "#ee9b009c", attuale
-
     backgroundColor: "#aad0d7",
   },
 }));
-// 76b3b9   aad0d7
+
 export const StyledTablePagination = styled(TablePagination)(({ theme }) => ({
   backgroundColor: theme.palette.background.dark,
   color: theme.palette.common.primary,
@@ -258,3 +251,58 @@ export const ModalToggleButtonGroup = styled(ToggleButtonGroup)(
     },
   })
 );
+
+export const StyledTextField = styled(TextField, {
+  shouldForwardProp: (prop) => prop !== "isEditing",
+})(({ theme, isEditing }) => ({
+  "& .MuiOutlinedInput-root": {
+    color: isEditing
+      ? theme.palette.secondary.main
+      : theme.palette.secondary.dark,
+    "&:hover": {
+      color: isEditing && theme.palette.common.contrast,
+    },
+    "& fieldset": {
+      borderColor: theme.palette.secondary.dark,
+    },
+    "&:hover fieldset, &.Mui-focused fieldset": {
+      borderColor: isEditing
+        ? theme.palette.common.contrast
+        : theme.palette.secondary.dark,
+    },
+    "&.Mui-focused": {
+      color: isEditing && theme.palette.common.contrast,
+    },
+    "&.Mui-disabled fieldset, & .MuiInputBase-input.Mui-disabled": {
+      borderColor: theme.palette.secondary.dark,
+      WebkitTextFillColor: theme.palette.secondary.dark,
+    },
+  },
+  "& .MuiInputLabel-root": {
+    color: theme.palette.secondary.dark,
+    "&.Mui-focused": {
+      color: theme.palette.common.contrast,
+    },
+    "&.Mui-disabled": {
+      color: theme.palette.secondary.dark,
+    },
+  },
+  "&:hover .MuiInputLabel-root": {
+    color: isEditing && theme.palette.common.contrast,
+  },
+  "& .MuiInputBase-input": {
+    "&:-webkit-autofill": {
+      WebkitBoxShadow: `0 0 0 100px ${theme.palette.background.default} inset`,
+      WebkitTextFillColor: theme.palette.secondary.dark,
+    },
+    "&:-webkit-autofill:focus": {
+      WebkitBoxShadow: `0 0 0 100px ${theme.palette.background.default} inset`,
+      WebkitTextFillColor: theme.palette.common.contrast,
+      caretColor: theme.palette.common.contrast,
+    },
+    "&:-webkit-autofill:hover": {
+      WebkitBoxShadow: `0 0 0 100px ${theme.palette.background.default} inset`,
+      WebkitTextFillColor: isEditing && theme.palette.common.contrast,
+    },
+  },
+}));

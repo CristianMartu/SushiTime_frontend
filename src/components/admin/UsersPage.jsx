@@ -1,13 +1,4 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  ButtonGroup,
-  Container,
-  Form,
-  Modal,
-  Table,
-  ToggleButton,
-} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAllUser,
@@ -15,7 +6,30 @@ import {
   fetchPatchUserRole,
   fetchSaveUser,
 } from "../../redux/actions";
-import CustomPagination from "../CustomPagination";
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  ToggleButton,
+  Typography,
+} from "@mui/material";
+import {
+  ModalToggleButtonGroup,
+  StyledTableCell,
+  TablePaper,
+} from "../../style/style";
+import CustomTablePagination from "../CustomTablePagination";
 
 const UsersPage = () => {
   const dispatch = useDispatch();
@@ -59,7 +73,8 @@ const UsersPage = () => {
     { name: "STAFF", value: "STAFF" },
   ];
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = (event) => {
+    event.preventDefault();
     handleCloseModal();
     console.log(roleValue);
     if (userId && showModalUpdate) {
@@ -75,174 +90,201 @@ const UsersPage = () => {
     dispatch(fetchDeleteUser(userId));
   };
 
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
+  const handleRowsPerPageChange = (newRowsPerPage) => {
+    setRowsPerPage(newRowsPerPage);
+  };
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   useEffect(() => {
-    dispatch(fetchAllUser(currentPage));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage]);
+    dispatch(fetchAllUser(currentPage, rowsPerPage));
+  }, [currentPage, dispatch, rowsPerPage]);
 
   return (
     <>
-      <Container>
-        <h3>Staff</h3>
-        <Button
-          className="mb-3"
-          onClick={() => {
-            setShowModal(true);
-            setShowForm(true);
+      <Box sx={{ height: "calc(100vh - 4rem)", overflow: "auto" }}>
+        <Container
+          maxWidth="lg"
+          sx={{
+            paddingBlock: "1rem",
           }}
         >
-          Aggiungi utente
-        </Button>
-        <Table
-          striped
-          bordered
-          hover
-          className="text-center mb-3"
-          responsive="sm"
+          <Typography variant="h3" color={"secondary"}>
+            Staff
+          </Typography>
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{ marginBlockEnd: 1 }}
+            onClick={() => {
+              setShowModal(true);
+              setShowForm(true);
+            }}
+          >
+            <Typography>Aggiungi utente</Typography>
+          </Button>
+          <TablePaper>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6">Ruolo</Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6">Nome</Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6">Cognome</Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography variant="h6">Email</Typography>
+                    </StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {users.content &&
+                    users.content.map((user) => {
+                      if (user.id !== currentUser.id) {
+                        return (
+                          <TableRow
+                            key={user.id}
+                            onClick={() => {
+                              setShowModal(true);
+                              setShowModalUpdate(true);
+                              setUserId(user.id);
+                            }}
+                            hover
+                          >
+                            <StyledTableCell align="center">
+                              <Typography>{user.role}</Typography>
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              <Typography>{user.name}</Typography>
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              <Typography>{user.surname}</Typography>
+                            </StyledTableCell>
+                            <StyledTableCell align="center">
+                              <Typography>{user.email}</Typography>
+                            </StyledTableCell>
+                          </TableRow>
+                        );
+                      }
+                    })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {users.page && users.page.totalElements > 1 && (
+              <CustomTablePagination
+                totalPages={users.page.totalElements - 1} // 1 per utente corrente
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleRowsPerPageChange}
+              />
+            )}
+          </TablePaper>
+        </Container>
+        <Dialog
+          open={showModal}
+          onClose={handleCloseModal}
+          fullWidth
+          maxWidth="sm"
+          disableEscapeKeyDown
+          centered
         >
-          <thead>
-            <tr>
-              <th>Ruolo</th>
-              <th>Nome</th>
-              <th>Cognome</th>
-              <th>Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.content &&
-              users.content.map((user) => {
-                if (user.id !== currentUser.id) {
-                  return (
-                    <tr
-                      key={user.id}
-                      onClick={() => {
-                        setShowModal(true);
-                        setShowModalUpdate(true);
-                        setUserId(user.id);
-                      }}
-                    >
-                      <td>{user.role}</td>
-                      <td>{user.name}</td>
-                      <td>{user.surname}</td>
-                      <td>{user.email}</td>
-                    </tr>
-                  );
-                }
-              })}
-          </tbody>
-        </Table>
-        {users.page && users.page.totalPages > 1 && (
-          <CustomPagination
-            totalPages={users.page ? users.page.totalPages : 0}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
-        )}
-      </Container>
-      <Modal
-        show={showModal}
-        onHide={handleCloseModal}
-        backdrop="static"
-        keyboard={false}
-        centered
-      >
-        <Form>
-          <Modal.Header closeButton>
-            <Modal.Title>Modifica</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {showForm && (
-              <>
-                <Form.Group controlId="formName">
-                  <Form.Label>Nome</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Inserire nome"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    autoFocus
-                  />
-                </Form.Group>
+          <DialogTitle variant="h5">
+            {showModalUpdate ? "Modifica" : "Aggiungi"}
+          </DialogTitle>
+          <form onSubmit={handleSaveChanges}>
+            <DialogContent dividers>
+              {showForm && (
+                <>
+                  <FormControl fullWidth margin="dense">
+                    <TextField
+                      id="formName"
+                      label="Nome"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Inserire nome"
+                      required
+                      autoFocus
+                    />
+                  </FormControl>
+                  <FormControl fullWidth margin="dense">
+                    <TextField
+                      id="formSurname"
+                      label="Cognome"
+                      name="surname"
+                      value={formData.surname}
+                      onChange={handleChange}
+                      placeholder="Inserire cognome"
+                      required
+                    />
+                  </FormControl>
+                  <FormControl fullWidth margin="dense">
+                    <TextField
+                      id="formEmail"
+                      label="Email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="Inserire email"
+                      required
+                    />
+                  </FormControl>
+                  <FormControl fullWidth margin="dense">
+                    <TextField
+                      id="formPassword"
+                      label="Password"
+                      name="password"
+                      type="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="Inserire password"
+                      required
+                    />
+                  </FormControl>
+                </>
+              )}
 
-                <Form.Group controlId="formSurname">
-                  <Form.Label>Cognome</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Inserire cognome"
-                    name="surname"
-                    value={formData.surname}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
-
-                <Form.Group controlId="formEmail">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeholder="Inserire email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
-
-                <Form.Group controlId="formPassword">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Inserire password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
-              </>
-            )}
-            {showModalUpdate && (
-              <ButtonGroup>
-                {getState.map((state, idx) => (
-                  <ToggleButton
-                    key={idx}
-                    id={`state-${idx}`}
-                    type="radio"
-                    variant="outline-primary"
-                    value={state.value}
-                    checked={roleValue === state.value}
-                    onChange={(e) => {
-                      setRoleValue(e.currentTarget.value);
-                    }}
-                  >
-                    {state.name}
-                  </ToggleButton>
-                ))}
-              </ButtonGroup>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseModal}>
-              Annulla
-            </Button>
-            {showModalUpdate && (
-              <Button variant="outline-danger" onClick={handleDelete}>
-                Elimina
+              {showModalUpdate && (
+                <ModalToggleButtonGroup
+                  value={roleValue}
+                  exclusive
+                  onChange={(e, value) => setRoleValue(value)}
+                  sx={{ marginBlock: "1.5rem" }}
+                >
+                  {getState.map((state, idx) => (
+                    <ToggleButton key={idx} value={state.value}>
+                      {state.name}
+                    </ToggleButton>
+                  ))}
+                </ModalToggleButtonGroup>
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseModal} color="primary">
+                Annulla
               </Button>
-            )}
-            <Button variant="primary" onClick={handleSaveChanges}>
-              {showModalUpdate ? "Modifica" : "Salva"}
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
+              {showModalUpdate && (
+                <Button onClick={handleDelete} color="error" variant="outlined">
+                  Elimina
+                </Button>
+              )}
+              <Button type="submit" variant="contained" color="primary">
+                {showModalUpdate ? "Modifica" : "Salva"}
+              </Button>
+            </DialogActions>
+          </form>
+        </Dialog>
+      </Box>
     </>
   );
 };

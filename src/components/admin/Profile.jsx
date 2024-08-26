@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPutCurrentUser } from "../../redux/actions";
+import { Box, Button, Divider, FormControl, Typography } from "@mui/material";
+import { StyledTextField } from "../../style/style";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -37,113 +38,149 @@ const Profile = () => {
     dispatch(fetchPutCurrentUser(payload));
     setIsChangingPassword(false);
     setPassword("");
+    setIsEditing(false);
   };
 
   return (
-    <div className="mx-auto" style={{ maxWidth: 600 }}>
-      <h3 className="my-3">Profilo</h3>
-      <Form onSubmit={handleProfileSubmit}>
-        <Form.Group controlId="formRole" className="mb-3">
-          <Form.Label>Ruolo</Form.Label>
-          <Form.Control
+    <Box
+      height={"calc(100vh - 4rem)"}
+      overflow={"auto"}
+      maxWidth={"600px"}
+      marginInline={"auto"}
+    >
+      <Typography variant="h3" color={"secondary"} marginBlock={2}>
+        Profilo
+      </Typography>
+      <Box component="form" onSubmit={handleProfileSubmit} sx={{ mt: 2 }}>
+        <FormControl fullWidth margin="normal">
+          <StyledTextField
+            color="secondary"
+            id="formRole"
             type="text"
-            placeholder="Inserisci il tuo ruolo"
             name="role"
+            label="Ruolo"
             value={formData.role}
-            readOnly
+            placeholder="Inserisci il tuo ruolo"
+            InputLabelProps={{ shrink: true }}
+            disabled
           />
-        </Form.Group>
-        <Form.Group controlId="formName" className="mb-3">
-          <Form.Label>Nome</Form.Label>
-          <Form.Control
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <StyledTextField
+            id="formName"
             type="text"
-            placeholder="Inserisci il tuo nome"
             name="name"
+            label="Nome"
             value={formData.name}
             onChange={handleChange}
-            readOnly={!isEditing}
+            placeholder="Inserisci il tuo nome"
+            InputLabelProps={{ shrink: true }}
+            isEditing={isEditing}
+            disabled={!isEditing}
+            InputProps={{
+              readOnly: !isEditing,
+            }}
           />
-        </Form.Group>
-        <Form.Group controlId="formSurname" className="mb-3">
-          <Form.Label>Cognome</Form.Label>
-          <Form.Control
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <StyledTextField
+            id="formSurname"
             type="text"
-            placeholder="Inserisci il tuo cognome"
             name="surname"
+            label="Cognome"
             value={formData.surname}
             onChange={handleChange}
-            readOnly={!isEditing}
+            placeholder="Inserisci il tuo cognome"
+            InputLabelProps={{ shrink: true }}
+            isEditing={isEditing}
+            disabled={!isEditing}
+            InputProps={{
+              readOnly: !isEditing,
+            }}
           />
-        </Form.Group>
-        <Form.Group controlId="formEmail" className="mb-3">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <StyledTextField
+            id="formEmail"
             type="email"
-            placeholder="Inserisci la tua email"
             name="email"
+            label="Email"
             value={formData.email}
             onChange={handleChange}
-            readOnly={!isEditing}
+            placeholder="Inserisci la tua email"
+            InputLabelProps={{ shrink: true }}
+            isEditing={isEditing}
+            disabled={!isEditing}
+            InputProps={{
+              readOnly: !isEditing,
+            }}
           />
-        </Form.Group>
-
-        {!isEditing ? (
-          <div className="text-end">
-            <Button variant="primary" onClick={() => setIsEditing(true)}>
-              Modifica Profilo
+        </FormControl>
+        <Box textAlign="right" mt={2}>
+          {!isEditing ? (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => setIsEditing(true)}
+            >
+              <Typography>Modifica Profilo</Typography>
             </Button>
-          </div>
-        ) : (
-          <>
-            <div className="text-end">
+          ) : (
+            <>
               <Button
-                variant="secondary"
-                className="me-2"
+                variant="outlined"
+                color="secondary"
                 onClick={() => {
                   setIsEditing(false);
                   setIsChangingPassword(false);
                 }}
+                sx={{ mr: 2 }}
               >
-                Annulla
+                <Typography>Annulla</Typography>
               </Button>
-              <Button variant="primary" type="submit">
-                Salva Modifiche
+              <Button variant="contained" color="secondary" type="submit">
+                <Typography>Salva Modifiche</Typography>
               </Button>
-            </div>
-          </>
-        )}
-      </Form>
+            </>
+          )}
+        </Box>
+      </Box>
       {isEditing && (
         <>
-          <hr />
+          <Divider sx={{ my: 3 }} />
           <Button
-            variant="info"
+            variant="contained"
+            color="error"
             onClick={() => setIsChangingPassword(!isChangingPassword)}
           >
-            {isChangingPassword
-              ? "Annulla Modifica Password"
-              : "Modifica Password"}
+            <Typography>
+              {isChangingPassword
+                ? "Annulla Modifica Password"
+                : "Modifica Password"}
+            </Typography>
           </Button>
           {isChangingPassword && (
-            <Form onSubmit={handlePasswordSubmit} className="mt-3 ">
-              <Form.Group controlId="formPassword" className="mb-3">
-                <Form.Label>Nuova Password</Form.Label>
-                <Form.Control
+            <Box component="form" onSubmit={handlePasswordSubmit} mt={3}>
+              <FormControl fullWidth margin="normal">
+                <StyledTextField
+                  id="formPassword"
                   type="password"
-                  placeholder="Inserisci una nuova password"
+                  label="Nuova Password"
                   value={password}
                   onChange={handlePasswordChange}
+                  placeholder="Inserisci una nuova password"
+                  isEditing={isEditing}
                   required
                 />
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                Cambia Password
+              </FormControl>
+              <Button variant="contained" type="submit" color="secondary">
+                <Typography>Cambia Password</Typography>
               </Button>
-            </Form>
+            </Box>
           )}
         </>
       )}
-    </div>
+    </Box>
   );
 };
 

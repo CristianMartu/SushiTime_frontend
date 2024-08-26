@@ -1,4 +1,5 @@
-const token = localStorage.getItem("authToken");
+const getToken = () => localStorage.getItem("authToken");
+const token = getToken();
 
 const urlBase = "http://localhost:3001";
 
@@ -663,6 +664,7 @@ export const URL_CURRENT_USER = `${urlBase}/users/profile`;
 export const fetchCurrentUser = () => {
   return async (dispatch, getState) => {
     console.log("fetchCurrentUser", getState());
+    // const t = localStorage.getItem("authToken");
     try {
       const response = await fetch(URL_CURRENT_USER, {
         headers: {
@@ -716,11 +718,11 @@ export const ALL_USER = "ALL_USER";
 export const setAllUser = (payload) => ({ type: ALL_USER, payload });
 
 // GET ALL USERS
-export const fetchAllUser = (page = 0) => {
+export const fetchAllUser = (page = 0, rows = 10) => {
   return async (dispatch, getState) => {
     console.log("fetchAllUser", getState());
     try {
-      const response = await fetch(URL_ALL_USER + page, {
+      const response = await fetch(URL_ALL_USER + page + "&size=" + rows, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

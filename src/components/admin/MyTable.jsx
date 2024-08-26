@@ -76,7 +76,6 @@ const MyTable = () => {
     event.preventDefault();
     handleCloseModal();
     const payload = { ...createTable };
-    // console.log("Payload:", payload);
     if (showModalUpdate) {
       payload.number = "";
       dispatch(fetchPatchTable(payload, payload.tableId, currentPage));
@@ -260,7 +259,6 @@ const MyTable = () => {
                 value={stateValue}
                 exclusive
                 onChange={(e, newValue) => setStateValue(newValue)}
-                color="primary"
                 fullWidth
                 sx={{ marginBlock: 3 }}
               >

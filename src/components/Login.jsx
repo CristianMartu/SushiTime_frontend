@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Box, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { fetchLogin, handleError } from "../redux/actions";
+import { StyledTextField } from "../style/style";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [login, setLogin] = useState({
     email: "",
@@ -24,13 +27,12 @@ const Login = () => {
 
     try {
       await dispatch(fetchLogin(login));
-      window.location.href = "/orders";
-      // navigate("/");
+      navigate("/orders");
     } catch (err) {
-      setLogin({
-        email: login.email,
+      setLogin((prevState) => ({
+        ...prevState,
         password: "",
-      });
+      }));
       dispatch(handleError(err.message));
     }
   };
@@ -40,42 +42,40 @@ const Login = () => {
   }, []);
 
   return (
-    <Container
-      className="d-flex justify-content-center align-items-center vh-100"
-      style={{ maxWidth: 380 }}
-    >
-      <div className="w-100">
-        <h3 className="text-center">Accedi</h3>
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="email">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="inserire email"
-              value={login.email}
-              onChange={handleChangeLogin}
-              autoFocus
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="inserire password"
-              value={login.password}
-              onChange={handleChangeLogin}
-              required
-            />
-          </Form.Group>
-          <div className="text-end">
-            <Button variant="primary" type="submit">
-              Invio
-            </Button>
-          </div>
-        </Form>
-      </div>
-    </Container>
+    <Box maxWidth={"380px"} marginInline={"auto"} marginBlockStart={"20vh"}>
+      <Typography variant="h3" color={"secondary"} align="center" gutterBottom>
+        Accedi
+      </Typography>
+      <Box component="form" onSubmit={handleSubmit}>
+        <StyledTextField
+          margin="dense"
+          id="email"
+          label="Email"
+          type="text"
+          fullWidth
+          value={login.email}
+          onChange={handleChangeLogin}
+          isEditing={true}
+          required
+        />
+        <StyledTextField
+          margin="dense"
+          id="password"
+          label="Password"
+          type="password"
+          fullWidth
+          value={login.password}
+          onChange={handleChangeLogin}
+          isEditing={true}
+          required
+        />
+        <Box textAlign={"right"} marginBlockStart={"0.5rem"}>
+          <Button variant="contained" color="secondary" type="submit">
+            <Typography>Invio</Typography>
+          </Button>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
