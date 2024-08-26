@@ -14,15 +14,18 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  useTheme,
 } from "@mui/material";
 import { FaMinus } from "react-icons/fa";
 import { TiPlus } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct, removeProduct } from "../../redux/actions";
+import logo from "../../assets/logo.png";
 
 const Products = ({ categoryName }) => {
   const token = localStorage.getItem("authToken");
   const URL = "http://localhost:3001/products/category?size=50";
+  const theme = useTheme();
 
   const dispatch = useDispatch();
 
@@ -116,8 +119,7 @@ const Products = ({ categoryName }) => {
               const quantity = selectedProduct ? selectedProduct.length : 0;
               const imageUrl = product.image.startsWith("http")
                 ? product.image
-                : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg";
-
+                : logo;
               return (
                 <Grid item key={product.id} xs="auto">
                   <Card
@@ -132,8 +134,8 @@ const Products = ({ categoryName }) => {
                       boxShadow: isSaved(product.id)
                         ? `${alpha("#9b2226ff", 0.1)} 0px 4px 12px 2px`
                         : `0px 4px 8px rgba(0, 0, 0, 0.4)`,
-                      // backgroundColor: "common.contrast",
-                      backgroundColor: "common.white",
+                      backgroundColor: "common.contrast",
+                      // backgroundColor: "common.white",
                       borderWidth: 2,
                       borderStyle: "solid",
                       borderRadius: "16px",
@@ -179,7 +181,13 @@ const Products = ({ categoryName }) => {
                       component="img"
                       image={imageUrl}
                       alt={product.name}
-                      sx={{ height: 140, objectFit: "contain" }}
+                      sx={{
+                        height: 140,
+                        objectFit: "contain",
+                        backgroundColor:
+                          !product.image.startsWith("http") &&
+                          theme.palette.common.black,
+                      }}
                     />
                     <CardActions
                       sx={{
@@ -252,13 +260,16 @@ const Products = ({ categoryName }) => {
               image={
                 selectedProduct.image.startsWith("http")
                   ? selectedProduct.image
-                  : "https://thecryptogateway.it/wp-content/uploads/sushiswapLogo.jpg"
+                  : logo
               }
               alt={selectedProduct.name}
               sx={{
                 width: "200px",
                 height: "auto",
                 objectFit: "contain",
+                backgroundColor:
+                  !selectedProduct.image.startsWith("http") &&
+                  theme.palette.common.black,
               }}
             />
             <Typography variant="h6" sx={{ marginTop: 2 }}>
