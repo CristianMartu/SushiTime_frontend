@@ -14,6 +14,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Input,
   Table,
   TableBody,
   TableContainer,
@@ -50,6 +51,15 @@ const Product = () => {
     id: "",
   });
 
+  const [imageFile, setImageFile] = useState(null);
+  const [, setFileName] = useState("");
+  const handleFileChange = (event) => {
+    setImageFile(event.target.files[0]);
+    if (event.target.files.length > 0) {
+      setFileName(event.target.files[0].name);
+    }
+  };
+
   const handleCloseModal = () => {
     setShowModal(false);
     setTimeout(() => {
@@ -58,7 +68,6 @@ const Product = () => {
         name: "",
         description: "",
         price: "",
-        image: "",
         number: "",
         category: "",
       });
@@ -85,9 +94,14 @@ const Product = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     handleCloseModal();
+    const formData = new FormData();
+    formData.append("product", JSON.stringify(attProduct));
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
     if (showModalUpdate) {
-      dispatch(fetchPutProduct(attProduct, attProductView.id, currentPage));
-    } else dispatch(fetchSaveProduct(attProduct, currentPage));
+      dispatch(fetchPutProduct(formData, attProductView.id, currentPage));
+    } else dispatch(fetchSaveProduct(formData, currentPage));
   };
 
   const handleDelete = () => {
@@ -262,20 +276,34 @@ const Product = () => {
               inputProps={{ min: 0, step: 0.01 }}
               required={!showModalUpdate}
             />
-            <TextField
-              margin="dense"
-              id="image"
-              label="Immagine URL"
-              type="text"
-              fullWidth
-              value={attProduct.image}
-              onChange={handleChangeAttProduct}
-              placeholder={
-                attProductView.image || "Inserisci un URL per l'immagine"
-              }
-              InputLabelProps={{ shrink: showModalUpdate ? true : undefined }}
-              required={!showModalUpdate}
-            />
+            <label htmlFor="contained-button-file">
+              <Typography
+                component="span"
+                variant="primary"
+                marginInlineEnd={1}
+              >
+                {!showModalUpdate ? "Carica Immagine" : "Immagine attuale"}
+              </Typography>
+              {showModalUpdate && (
+                <img
+                  src={attProductView.image}
+                  alt={"product image"}
+                  style={{
+                    objectFit: "contain",
+                    backgroundSize: "cover",
+                    maxWidth: "70px",
+                    marginInlineEnd: "0.5rem",
+                    marginBlock: 1,
+                  }}
+                />
+              )}
+              <Input
+                accept="image/*"
+                id="contained-button-file"
+                type="file"
+                onChange={handleFileChange}
+              />
+            </label>
             <TextField
               margin="dense"
               id="number"

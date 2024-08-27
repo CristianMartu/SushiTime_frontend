@@ -565,10 +565,9 @@ export const fetchSaveProduct = (payload, page = 0) => {
       const response = await fetch(`${urlBase}/products`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: payload,
       });
       if (!response.ok) {
         const errorData = await response.json();
@@ -590,10 +589,9 @@ export const fetchPutProduct = (payload, productId, page) => {
       const response = await fetch(`${urlBase}/products/${productId}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: payload,
       });
       if (!response.ok) {
         const errorData = await response.json();

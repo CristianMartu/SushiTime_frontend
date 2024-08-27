@@ -188,6 +188,7 @@ const Products = ({ categoryName }) => {
                           !product.image.startsWith("http") &&
                           theme.palette.common.black,
                       }}
+                      loading="lazy"
                     />
                     <CardActions
                       sx={{
