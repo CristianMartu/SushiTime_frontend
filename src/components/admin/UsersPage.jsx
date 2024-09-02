@@ -194,8 +194,6 @@ const UsersPage = () => {
           onClose={handleCloseModal}
           fullWidth
           maxWidth="sm"
-          disableEscapeKeyDown
-          centered
         >
           <DialogTitle variant="h5">
             {showModalUpdate ? "Modifica" : "Aggiungi"}
