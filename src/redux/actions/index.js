@@ -1,7 +1,9 @@
 const getToken = () => localStorage.getItem("authToken");
 const token = getToken();
 
-const urlBase = "http://localhost:3001";
+// const urlBase = "http://localhost:3001";
+const urlBase =
+  "https://de7d-2001-b07-6461-c8e0-d93c-3142-f070-9b0b.ngrok-free.app";
 
 // GET SINGLE ORDER
 
@@ -645,7 +647,10 @@ export const fetchLogin = (payload) => {
         throw new Error(errorData.message);
       }
       const data = await response.json();
-      localStorage.setItem("authToken", data.accessToken);
+      document.cookie = `jwtToken=${data.accessToken}; Secure; SameSite=None; Path=/;`;
+      // document.cookie = `jwtToken=${data.accessToken}; Secure; SameSite=None; Path=/; Domain:https://de7d-2001-b07-6461-c8e0-d93c-3142-f070-9b0b.ngrok-free.app`;
+      // localStorage.setItem("authToken", data.accessToken);
+      console.log(data);
       localStorage.setItem("adminPassword", 1234);
     } catch (error) {
       console.log(error);
@@ -664,12 +669,16 @@ export const fetchCurrentUser = () => {
     console.log("fetchCurrentUser", getState());
     try {
       const response = await fetch(URL_CURRENT_USER, {
+        method: "GET",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
+          // Authorization: `Bearer ${getToken()}`,
+          "ngrok-skip-browser-warning": "69420",
         },
       });
-
+      // document.cookie = "testCookie=testValue; Secure; SameSite=None; Path=/";
+      console.log(document.cookie);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message);

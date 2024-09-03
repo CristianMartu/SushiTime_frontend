@@ -3,11 +3,11 @@ import { Button, Box, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { fetchLogin, handleError } from "../redux/actions";
 import { StyledTextField } from "../style/style";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [login, setLogin] = useState({
     email: "",
@@ -27,8 +27,8 @@ const Login = () => {
 
     try {
       await dispatch(fetchLogin(login));
-      window.location.href = "/orders";
-      // navigate("/orders");
+      // window.location.href = "/orders";
+      navigate("/orders");
     } catch (err) {
       setLogin((prevState) => ({
         ...prevState,
